@@ -1,20 +1,19 @@
 package com.service.Hotels.Model;
 
-import io.micrometer.common.lang.NonNull;
+import java.sql.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.util.List;
 
 
 @Getter
@@ -23,24 +22,26 @@ import java.util.List;
 @AllArgsConstructor
 @ToString(includeFieldNames=true)
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "reserves")
+public class Reserve {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NonNull private Long id;
+	private Long id;
 	
-	@Column(name = "name")
-	@NonNull private String name;
+	@Column(name = "start_date")
+	private Date startDate;
 
-	@Column(name = "surname")
-	private String surname;
+	@Column(name = "finish_date")
+	private Date finishDate;
 
-    @Column(name = "email")
-    @NonNull private String email;
+    @Column(name = "state")
+    private String state;
 
 	@Column(name = "password")
-	@NonNull private String password;
+	private String password;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<Reserve> reserves;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }
