@@ -1,0 +1,85 @@
+@startuml Hoteles
+class Usuario {
+    - id_usuario : int
+    - nombre : string
+    - apellido : string
+    - correo_electronico : string
+    - contraseña : string
+    + registrar(): void
+    + iniciarSesion(): void
+    + actualizar_informacion() : void
+    + buscarAlojamiento(): void
+    + reservar(): void
+    + gestionarReserva(): void
+}
+
+class Hotel {
+    - id_hotel : int
+    - nombre : string
+    - direccion : string
+    - city
+    - fotos: list<string>
+    - telefono : string
+    - correo_electronico : string
+    - descripcion: string
+    + actualizar_disponibilidad() : void
+    + generar_reporte() : void
+    + gestionarReservas(): void
+}
+
+class Habitacion {
+    - id_habitacion : int
+    - tipo : string
+    - precio : float
+    - disponibilidad : bool
+    - fotos: list<string>
+    - descripcion: string
+    + reservar() : void
+    + actualizar_disponibilidad() : void
+}
+
+class Reserva {
+    - id_reserva : int
+    - fecha_entrada : date
+    - fecha_salida : date
+    - estado : string
+    - usuario: Usuario
+    + calcular_total() : float
+}
+
+class Pago {
+    - id_pago : int
+    - monto : float
+    - metodoPago: string
+    - fechaHora: datetime
+    - estado : string
+    + realizarPago(): void
+    + actualizarEstadoPago(): void
+}
+
+class Valoracion {
+    - id_valoracion : int
+    - valoracion : int
+    - comentario : string
+    - usuario: Usuario
+    - hotel: Hotel
+}
+
+class Notificacion {
+    - idNotificacion: int
+    - mensaje: string
+    - fechaHora: datetime
+    - usuario: Usuario
+    - tipo: string
+    + enviar(): void
+}
+Usuario "1" -- "0..*" Reserva : Realiza, Gestiona
+Usuario "0.." -- "0.." Valoracion : Realiza
+Usuario "1" -- "0..*" Notificacion : Recibe
+
+Reserva "1" -- "1" Pago
+Valoracion "0..*" -- "1" Hotel : SeRefiereA
+Hotel "1" -- "0..*" Notificacion : Recibe
+
+Hotel "1" -- "1..*" Habitacion : Tiene
+@enduml
