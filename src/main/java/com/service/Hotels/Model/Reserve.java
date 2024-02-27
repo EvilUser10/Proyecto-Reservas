@@ -37,9 +37,6 @@ public class Reserve {
     @Column(name = "state")
     private String state;
 
-	@Column(name = "password")
-	private String password;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
