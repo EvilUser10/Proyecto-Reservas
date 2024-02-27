@@ -1,8 +1,14 @@
 package com.service.Hotels.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.Model.User;
@@ -24,13 +30,46 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public User findUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
-            return optionalUser.get(); // Retorna el usuario si está presente
+            User user = optionalUser.get();
+            return ResponseEntity.ok(user);
         } else {
-            throw new ExceptionInInitializerError("Usuario no encontrado con ID: " + id); // Lanza una excepción si no está                                                              // presente
+            return ResponseEntity.notFound().build();
         }
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<User> createUser(@RequestBody User newUser) {
+
+        User savedUser = userRepository.save(newUser);
+
+        if (savedUser != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<User> editUser(@PathVariable("id") Long id, @RequestBody User user) {
+        User editedUser = userRepository.save(user);
+
+        if (editedUser != null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(editedUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.noContent().build(); // Eliminación exitosa
+        } else {
+            return ResponseEntity.notFound().build(); // Usuario no encontrado
+        }
+    }
 }
