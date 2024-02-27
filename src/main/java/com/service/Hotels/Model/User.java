@@ -16,30 +16,33 @@ import lombok.Setter;
 import lombok.ToString;
 import java.util.List;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(includeFieldNames=true)
+@ToString(includeFieldNames = true)
 @Entity
 @Table(name = "users")
 public class User {
-    @Id
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NonNull private Long id;
-	
+	@NonNull
+	private Long id;
+
 	@Column(name = "name")
-	@NonNull private String name;
+	@NonNull
+	private String name;
 
 	@Column(name = "surname")
 	private String surname;
 
-    @Column(name = "email")
-    @NonNull private String email;
+	@Column(name = "email")
+	@NonNull
+	private String email;
 
 	@Column(name = "password")
-	@NonNull private String password;
+	@NonNull
+	private String password;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Reserve> reserves;
