@@ -1,4 +1,4 @@
-package com.service.Hotels.controller;
+package com.service.Hotels.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
