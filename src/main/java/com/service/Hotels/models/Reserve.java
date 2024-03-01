@@ -1,4 +1,4 @@
-package com.service.Hotels.Model;
+package com.service.Hotels.models;
 
 import java.sql.Date;
 import jakarta.persistence.Column;

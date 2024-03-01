@@ -1,4 +1,4 @@
-package com.service.Hotels.Model;
+package com.service.Hotels.models;
 
 import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.Column;

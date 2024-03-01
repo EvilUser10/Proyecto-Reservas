@@ -1,4 +1,4 @@
-package com.service.Hotels.Controller;
+package com.service.Hotels.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.service.Hotels.Model.User;
+import com.service.Hotels.repositories.UserRepository;
 import java.util.List;
-import java.util.Optional;
-
-import com.service.Hotels.Repository.UserRepository;
+import com.service.Hotels.exceptions.UserNotFoundException;
+import com.service.Hotels.models.User;
 
 @RestController
 @RequestMapping("/api")
@@ -29,15 +28,21 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    // @GetMapping("/user/{id}")
+    // public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
+    //     Optional<User> optionalUser = userRepository.findById(id);
+    //     if (optionalUser.isPresent()) {
+    //         User user = optionalUser.get();
+    //         return ResponseEntity.ok(user);
+    //     } else {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    // }
+
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public User findUser(@PathVariable("id") Long id) {
+        User optionalUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id: " + id  + "not found "));
+        return optionalUser;
     }
 
     @PostMapping("/user")

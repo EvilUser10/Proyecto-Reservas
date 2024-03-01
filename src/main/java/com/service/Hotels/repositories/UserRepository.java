@@ -1,7 +1,8 @@
-package com.service.Hotels.Repository;
+package com.service.Hotels.repositories;
 
-import com.service.Hotels.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.service.Hotels.models.User;
 
 
 
