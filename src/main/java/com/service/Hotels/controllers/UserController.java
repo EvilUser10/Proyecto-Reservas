@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.repositories.UserRepository;
 import java.util.List;
-import com.service.Hotels.exceptions.UserNotFoundException;
+
+import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.User;
 
 @RestController
@@ -41,7 +42,7 @@ public class UserController {
 
     @GetMapping("/user/{id}")
     public User findUser(@PathVariable("id") Long id) {
-        User optionalUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id: " + id  + "not found "));
+        User optionalUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id  + "not found "));
         return optionalUser;
     }
 

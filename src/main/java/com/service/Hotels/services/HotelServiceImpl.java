@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.Hotels.models.Hotel;
 import com.service.Hotels.repositories.HotelRepository;
-import com.service.Hotels.exceptions.HotelNotFoundException;
+import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.interfaces.HotelService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +92,7 @@ public class HotelServiceImpl implements HotelService {
 
         Hotel hotel = hotelRepository.findById(id)
         .orElseThrow(
-            () -> new HotelNotFoundException(id)
+            () -> new NotFoundException("No hay ningun hotel con el ID: " + id)
         );
 
         return hotel;

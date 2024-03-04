@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.service.Hotels.models.Hotel;
 import com.service.Hotels.assemblers.HotelModelAssembler;
-import com.service.Hotels.exceptions.HotelNotFoundException;
 import com.service.Hotels.interfaces.HotelService;
+import com.service.Hotels.exceptions.NotFoundException;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -34,7 +34,7 @@ public class HotelController {
     public CollectionModel<EntityModel<Hotel>> getAll(@PathVariable String city) {
         List<Hotel> hotels = hotelService.getAllHotelsByCity(city);
         if (hotels.isEmpty()) {
-            throw new HotelNotFoundException(city);
+            throw new NotFoundException("No se encuentra ningún hotel en la ciudad de "+ city);
         }
         List<EntityModel<Hotel>> hotelModels = hotels.stream()
                 .map(assembler::toModel)
@@ -49,12 +49,15 @@ public class HotelController {
 
         // Obtener la lista de hoteles en la ciudad dada
         List<Hotel> hotels = hotelService.getAllHotelsByCity(city);
+        if(hotels.size() <= 0){
+            throw new NotFoundException("No se encuentra ningún hotel en la ciudad de + " + city);
+        }
 
         // Buscar el hotel específico por su ID
         Hotel hotel = hotels.stream()
                 .filter(h -> h.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new HotelNotFoundException(city, id));
+                .orElseThrow(() -> new NotFoundException("No se encuentra ningún hotel en la ciudad de " + city + " con el ID " + id ));
 
         // Convertir el hotel encontrado en un EntityModel
         return assembler.toModel(hotel);
