@@ -47,5 +47,5 @@ public class User {
 	private String password;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<Reserve> reserves;
+	private List<Booking> bookings;
 }

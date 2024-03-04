@@ -23,7 +23,7 @@ import lombok.ToString;
 @ToString(includeFieldNames=true)
 @Entity
 @Table(name = "reserves")
-public class Reserve {
+public class Booking {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,5 +40,9 @@ public class Reserve {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
 
 }
