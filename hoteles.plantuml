@@ -13,6 +13,8 @@ class Usuario {
     + gestionarReserva(): void
 }
 
+
+
 class Hotel {
     - id_hotel : int
     - nombre : string

@@ -16,6 +16,8 @@ import lombok.Setter;
 import lombok.ToString;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +28,7 @@ import java.util.List;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NonNull
+	@JsonIgnore
 	private Long id;
 
 	@Column(name = "name")

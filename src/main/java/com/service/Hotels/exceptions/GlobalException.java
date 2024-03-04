@@ -47,6 +47,7 @@ public class GlobalException {
         MethodArgumentTypeMismatchException.class,
         HttpMessageNotReadableException.class,
         BindException.class,
+        IllegalArgumentException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerBadRequestException(Exception ex, HttpServletRequest request) {
@@ -66,6 +67,7 @@ public class GlobalException {
     public ErrorResponse handlerConflictException(Exception ex, HttpServletRequest request) {
        return new ErrorResponse(HttpStatus.CONFLICT, ex, request.getRequestURI());
     }
+
 
     @ExceptionHandler({
         UnauthorizedException.class,

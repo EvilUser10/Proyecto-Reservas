@@ -1,7 +1,6 @@
 package com.service.Hotels.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.repositories.UserRepository;
 import java.util.List;
 
+import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.User;
 
@@ -31,51 +31,63 @@ public class UserController {
 
     // @GetMapping("/user/{id}")
     // public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
-    //     Optional<User> optionalUser = userRepository.findById(id);
-    //     if (optionalUser.isPresent()) {
-    //         User user = optionalUser.get();
-    //         return ResponseEntity.ok(user);
-    //     } else {
-    //         return ResponseEntity.notFound().build();
-    //     }
+    // Optional<User> optionalUser = userRepository.findById(id);
+    // if (optionalUser.isPresent()) {
+    // User user = optionalUser.get();
+    // return ResponseEntity.ok(user);
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
     // }
 
     @GetMapping("/user/{id}")
     public User findUser(@PathVariable("id") Long id) {
-        User optionalUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id  + "not found "));
+        User optionalUser = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
         return optionalUser;
     }
 
     @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestBody User newUser) {
-
-        User savedUser = userRepository.save(newUser);
-
-        if (savedUser != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    public User createUser(@RequestBody User newUser) {
+        try {
+            User savedUser = userRepository.save(newUser);
+            return savedUser;
+        } catch (Exception e) {
+            throw (new BadRequestException("El usuario no se ha podido crear."));
         }
     }
 
     @PutMapping("/user/{id}")
     public ResponseEntity<User> editUser(@PathVariable("id") Long id, @RequestBody User user) {
-        User editedUser = userRepository.save(user);
 
-        if (editedUser != null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(editedUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        User userFind = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
+
+        userFind.setEmail(user.getEmail());
+        userFind.setName(user.getName());
+        userFind.setPassword(user.getPassword());
+        userFind.setSurname(user.getSurname());
+
+        try {
+            userRepository.save(userFind);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            throw (new BadRequestException("El usuario no se ha podido modificar."));
         }
     }
 
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); // Eliminación exitosa
+            try {
+                userRepository.deleteById(id);
+
+            } catch (Exception e) {
+                throw new BadRequestException("El usuario con el id: " + id + " no se ha podido borrar.");
+            }
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build(); // Usuario no encontrado
+            throw new NotFoundException("El usuario con el id: " + id + " no se ha encontrado.");
         }
     }
 }
