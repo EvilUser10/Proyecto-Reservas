@@ -25,8 +25,8 @@ public class Hotel {
     private String description;
     
 
-    @OneToMany(mappedBy = "Booking", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+	private List<Booking> bookings;
 
     public void actualizarDisponibilidad() {
         //TODO: implementar la actualización de la disponibilidad del hotel

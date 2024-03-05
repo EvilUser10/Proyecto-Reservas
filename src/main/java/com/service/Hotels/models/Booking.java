@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(includeFieldNames=true)
 @Entity
-@Table(name = "reserves")
+@Table(name = "bookings")
 public class Booking {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +45,9 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private Payment payment;
 
 }

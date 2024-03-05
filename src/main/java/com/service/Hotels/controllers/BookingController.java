@@ -69,7 +69,7 @@ public class BookingController {
             bookingFind.setStartDate(booking.getStartDate());
             bookingFind.setState(booking.getState());
             bookingFind.setUser(booking.getUser());
-            bookingFind.setHotel(booking.getHotel());
+            //bookingFind.setHotel(booking.getHotel());
             // bookingFind.setPayment(booking.getPayment());
 
             try {
