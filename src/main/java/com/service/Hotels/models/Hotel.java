@@ -28,6 +28,12 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
 	private List<Booking> bookings;
 
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Rating> ratings;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Notification> notifications;
+
     public void actualizarDisponibilidad() {
         //TODO: implementar la actualización de la disponibilidad del hotel
     }
