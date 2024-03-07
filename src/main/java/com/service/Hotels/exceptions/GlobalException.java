@@ -38,7 +38,7 @@ public class GlobalException {
 
     @ResponseBody
     @ExceptionHandler({
-        BadRequestException.class,
+      BadRequestException.class,
         DuplicateKeyException.class,
         HttpRequestMethodNotSupportedException.class,
         MethodArgumentNotValidException.class,

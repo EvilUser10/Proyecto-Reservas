@@ -52,6 +52,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency>
+
+		<!-- Google api -->
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.15.0</version> <!-- O la versión más reciente disponible -->
+		</dependency>
 	</dependencies>
 
 	<build>
