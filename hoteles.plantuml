@@ -46,6 +46,7 @@ class Reserva {
     - fecha_salida : date
     - estado : string
     - usuario: Usuario
+    - hotel: Hotel
     + calcular_total() : float
 }
 
@@ -76,10 +77,11 @@ class Notificacion {
     + enviar(): void
 }
 Usuario "1" -- "0..*" Reserva : Realiza, Gestiona
-Usuario "0.." -- "0.." Valoracion : Realiza
+Usuario "1" -- "0..*" Valoracion : Realiza
 Usuario "1" -- "0..*" Notificacion : Recibe
 
 Reserva "1" -- "1" Pago
+Reserva "0..*" -- "1" Hotel
 Valoracion "0..*" -- "1" Hotel : SeRefiereA
 Hotel "1" -- "0..*" Notificacion : Recibe
 
