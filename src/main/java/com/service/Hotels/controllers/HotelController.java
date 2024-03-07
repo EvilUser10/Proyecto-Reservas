@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.service.Hotels.models.Hotel;
+import com.service.Hotels.services.HotelServiceImpl;
 import com.service.Hotels.assemblers.HotelModelAssembler;
-import com.service.Hotels.interfaces.HotelService;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.exceptions.BadRequestException;
 //import javax.validation.constraints.Pattern;
@@ -32,7 +32,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class HotelController {
 
     @Autowired
-    private HotelService hotelService;
+    private HotelServiceImpl hotelService;
     @Autowired
     private HotelModelAssembler assembler;
 
