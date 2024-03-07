@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.service.Hotels.exceptions.BadRequestException;
@@ -18,6 +19,7 @@ import com.service.Hotels.models.Payment;
 import com.service.Hotels.repositories.PaymentRepository;
 
 @RestController
+@RequestMapping("/api")
 public class PaymentController {
   @Autowired
   PaymentRepository paymentRepository;

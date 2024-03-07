@@ -18,10 +18,10 @@ import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Booking;
 import com.service.Hotels.repositories.BookingRepository;
 
+@RestController
+@RequestMapping("/api")
 public class BookingController {
-    @RestController
-    @RequestMapping("/api")
-    public class UserController {
+    
 
         @Autowired
         private BookingRepository bookingRepository;
@@ -94,5 +94,4 @@ public class BookingController {
                 throw new NotFoundException("La reserva con el id: " + id + " no se ha encontrado.");
             }
         }
-    }
 }
