@@ -17,6 +17,7 @@ import lombok.ToString;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
@@ -50,5 +51,5 @@ public class User {
 	private List<Booking> bookings;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Notification> notifications;
+  private List<Notification> notifications;
 }
