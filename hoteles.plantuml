@@ -73,7 +73,7 @@ class Notificacion {
     - mensaje: string
     - fechaHora: datetime
     - usuario: Usuario
-    - tipo: string
+    - estado : boolean
     + enviar(): void
 }
 Usuario "1" -- "0..*" Reserva : Realiza, Gestiona

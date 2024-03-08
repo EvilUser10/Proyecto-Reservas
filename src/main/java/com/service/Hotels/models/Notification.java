@@ -2,6 +2,8 @@ package com.service.Hotels.models;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,9 @@ import lombok.Data;
 @Entity
 @Table(name = "notifications")
 public class Notification {
+  public Notification() {
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -26,11 +31,21 @@ public class Notification {
   @Column(name = "date")
   private Date date;
 
+  private Boolean isRead = false;
+
+  // ---------------RelationShip-----------------//
+
+  // Las notificaciones no llegaran hotel en sí. Sino que la recibira el usuario
+  // que administra el hotel
+  // Por lo tanto la relacion con el hotel no deberia.
+
   @ManyToOne
   @JoinColumn(name = "hotel_id")
+  //@JsonBackReference
   private Hotel hotel;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
+  @JsonBackReference
   private User user;
 }

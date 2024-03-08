@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.Hotels.models.Hotel;
 import com.service.Hotels.models.Room;
 import com.service.Hotels.repositories.HotelRepository;
-import com.service.Hotels.repositories.MyRoomRepository;
 import com.service.Hotels.validation.HotelValidation;
 
 import java.util.ArrayList;
@@ -23,9 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -33,13 +30,11 @@ public class HotelServiceImpl implements HotelService {
     private String googleApiKey;
     @Autowired
     private HotelRepository hotelRepository;
-    @Autowired
-    private MyRoomRepository roomRepository;
+    
     private RestTemplate restTemplate = new RestTemplate();
 
-    public HotelServiceImpl(HotelRepository hotelRepository, MyRoomRepository roomRepository) {
+    public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
-        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -93,11 +88,11 @@ public class HotelServiceImpl implements HotelService {
                             hotel.setFotos(fotos);
                             hotel.setRating(rating);
                             List<Room> rooms = createRandomRooms(hotel);
-                            for (Room room : rooms) {
-                                hotel.addRooms(room);
-                            }
+                            //hotel.setRooms(rooms);
+                            // for (Room room : rooms) {
+                            //     hotel.addRoom(room);
+                            // }
                             hotelRepository.save(hotel);
-                            roomRepository.saveAll(rooms);
                         }
 
                         

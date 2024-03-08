@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 
 import java.util.*;
 
-import com.service.Hotels.exceptions.BadRequestException;
-
 @Data
 @Entity
 @AllArgsConstructor
@@ -31,16 +29,12 @@ public class Hotel {
     private String description;
     private Double  rating;
 
-    @OneToMany(mappedBy ="hotel")
+    @OneToMany(mappedBy ="hotel", cascade = CascadeType.ALL)
     List<Room> rooms;
 
-    public void addRooms(Room room) {
-        if (rooms == null) {
-            rooms = new ArrayList<Room>();
-        }
-        rooms.add(room);
-        room.setHotel(this);
-    }
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Notification> notifications;
+
 
     public void actualizarDisponibilidad() {
         //TODO: implementar la actualización de la disponibilidad del hotel

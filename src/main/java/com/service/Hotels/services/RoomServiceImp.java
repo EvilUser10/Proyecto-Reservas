@@ -10,18 +10,21 @@ import org.springframework.web.server.ServerErrorException;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.ConflictException;
 import com.service.Hotels.exceptions.NotFoundException;
-import com.service.Hotels.interfaces.GenericService;
-import com.service.Hotels.repositories.GenericRepository;
+import com.service.Hotels.interfaces.RoomService;
+import com.service.Hotels.models.Room;
+import com.service.Hotels.repositories.RoomRepository;
 
 @Service
-public class GenericServiceImpl<T> implements GenericService<T>{
+public class RoomServiceImp implements RoomService{
 
     @Autowired
-    private GenericRepository<T, Long> repository;
-
+    private RoomRepository repository;
     @Override
-    public List<T> getAll() {
-        List<T> entities = repository.findAll();
+    public List<Room> getAllByHotelId(Long id) {
+        if (id == null) {
+            throw new BadRequestException("The ID cannot be null");
+        }
+        List<Room> entities = repository.findAllRoomsByHotelId(id);
         if (entities.isEmpty()) {
             throw new NotFoundException("No data found");
         }
@@ -29,17 +32,18 @@ public class GenericServiceImpl<T> implements GenericService<T>{
     }
 
     @Override
-    public T getEntityById(Long id) {
-        if (id == null) {
-            new BadRequestException("Ehe ID cannot be null");
-        }
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("there is no entity with ID " + id));
+    public Room findById(Long id) {
+        // TODO Solo si necesitamos ver las informaciones del habitacion. en este caso NO.
+        throw new UnsupportedOperationException("Unimplemented method 'findById': NO necesitamos ver las informaciones del habitacion");
     }
 
     @Override
-    public T addEntity(T entity) {
-        try {
-            return repository.save(entity);
+    public Room add(Room newRoom) {
+        if (newRoom == null) {
+            throw new BadRequestException("The room to add is null");
+        }
+       try {
+            return repository.save(newRoom);
         } catch (DataIntegrityViolationException e) {
              // si hay violacion en la clave única o intentadno insertar un intedad ya
             throw new ConflictException("Error adding entity: Data integrity violation");
@@ -50,21 +54,24 @@ public class GenericServiceImpl<T> implements GenericService<T>{
     }
 
     @Override
-    public T updateEntity(T entity) {
-         try {
-            T entityUpdated = repository.save(entity);
+    public Room update(Room newRoom) {
+        if (newRoom == null) {
+            throw new BadRequestException("The room to add is null");
+        }
+        try {
+            Room entityUpdated = repository.save(newRoom);
             return entityUpdated;
         } 
         catch(DataIntegrityViolationException e) {
-            throw new ConflictException("Error adding entity: Data integrity violation");
+            throw new ConflictException("Error updating Room: Data integrity violation");
         }
         catch (Exception e) {
-            throw new BadRequestException("Error adding new entity : " + entity.getClass().getSimpleName());
+            throw new BadRequestException("Error updating Room ");
         }
     }
 
     @Override
-    public void removeEntity(Long id) {
+    public void remove(Long id) {
         if (id == null) {
             throw new BadRequestException("Ehe ID cannot be null");
         }
@@ -72,18 +79,10 @@ public class GenericServiceImpl<T> implements GenericService<T>{
             try {
                 repository.deleteById(id);
             } catch (IllegalArgumentException ex) {
-                throw new ConflictException("Error moving entity: Data integrity violation");
+                throw new ConflictException("Error moving Room: Data integrity violation");
             }
         }
     }
 
-    @Override
-    public List<T> getAll(Long id) {
-        List<T> entities = repository.getAllRoomsByHotelId(id);
-        if (entities.isEmpty()) {
-            throw new NotFoundException("No data found");
-        }
-        return entities;
-    }
-
+    
 }
