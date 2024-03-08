@@ -90,7 +90,7 @@ public class HotelController {
         hotel.setFotos(newhotel.getFotos() == null ? hotel.getFotos() : newhotel.getFotos());
         hotel.setName(newhotel.getName());
         
-        Hotel hotelAdded = hotelService.addHotel(newhotel);
+        Hotel hotelAdded = hotelService.addHotel(hotel);
         return ResponseEntity.ok(hotelAdded);
     }
 }
