@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -41,5 +43,10 @@ public class Room {
 
   @Column(name = "description")
   private String description;
+
+  @ManyToOne
+  @JoinColumn(name = "hotel_id")
+  @JsonIgnore
+  private Hotel hotel;
 }
 

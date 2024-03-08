@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
 
@@ -12,12 +11,13 @@ import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.ConflictException;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.interfaces.GenericService;
+import com.service.Hotels.repositories.GenericRepository;
 
 @Service
-public class GenericServiceImpl<T> implements GenericService<T> {
+public class GenericServiceImpl<T> implements GenericService<T>{
 
     @Autowired
-    private JpaRepository<T, Long> repository;
+    private GenericRepository<T, Long> repository;
 
     @Override
     public List<T> getAll() {
@@ -31,7 +31,7 @@ public class GenericServiceImpl<T> implements GenericService<T> {
     @Override
     public T getEntityById(Long id) {
         if (id == null) {
-            new BadRequestException("The ID cannot be null");
+            new BadRequestException("Ehe ID cannot be null");
         }
         return repository.findById(id).orElseThrow(() -> new NotFoundException("there is no entity with ID " + id));
     }
@@ -66,7 +66,7 @@ public class GenericServiceImpl<T> implements GenericService<T> {
     @Override
     public void removeEntity(Long id) {
         if (id == null) {
-            throw new BadRequestException("The ID cannot be null");
+            throw new BadRequestException("Ehe ID cannot be null");
         }
         if (repository.existsById(id)) {
             try {
@@ -75,6 +75,15 @@ public class GenericServiceImpl<T> implements GenericService<T> {
                 throw new ConflictException("Error moving entity: Data integrity violation");
             }
         }
+    }
+
+    @Override
+    public List<T> getAll(Long id) {
+        List<T> entities = repository.getAllRoomsByHotelId(id);
+        if (entities.isEmpty()) {
+            throw new NotFoundException("No data found");
+        }
+        return entities;
     }
 
 }

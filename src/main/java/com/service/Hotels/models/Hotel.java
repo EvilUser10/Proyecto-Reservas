@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.*;
+
+import com.service.Hotels.exceptions.BadRequestException;
 
 @Data
 @Entity
@@ -29,7 +31,16 @@ public class Hotel {
     private String description;
     private Double  rating;
 
-    
+    @OneToMany(mappedBy ="hotel")
+    List<Room> rooms;
+
+    public void addRooms(Room room) {
+        if (rooms == null) {
+            rooms = new ArrayList<Room>();
+        }
+        rooms.add(room);
+        room.setHotel(this);
+    }
 
     public void actualizarDisponibilidad() {
         //TODO: implementar la actualización de la disponibilidad del hotel

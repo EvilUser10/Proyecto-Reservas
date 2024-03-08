@@ -3,8 +3,15 @@ package com.service.Hotels.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.Hotels.models.Hotel;
+import com.service.Hotels.models.Room;
 import com.service.Hotels.repositories.HotelRepository;
+import com.service.Hotels.repositories.MyRoomRepository;
 import com.service.Hotels.validation.HotelValidation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.interfaces.HotelService;
@@ -26,10 +33,13 @@ public class HotelServiceImpl implements HotelService {
     private String googleApiKey;
     @Autowired
     private HotelRepository hotelRepository;
+    @Autowired
+    private MyRoomRepository roomRepository;
     private RestTemplate restTemplate = new RestTemplate();
 
-    public HotelServiceImpl(HotelRepository hotelRepository) {
+    public HotelServiceImpl(HotelRepository hotelRepository, MyRoomRepository roomRepository) {
         this.hotelRepository = hotelRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -82,14 +92,21 @@ public class HotelServiceImpl implements HotelService {
                             hotel.setPhone(phone);
                             hotel.setFotos(fotos);
                             hotel.setRating(rating);
+                            List<Room> rooms = createRandomRooms(hotel);
+                            for (Room room : rooms) {
+                                hotel.addRooms(room);
+                            }
+                            hotelRepository.save(hotel);
+                            roomRepository.saveAll(rooms);
                         }
 
-                        hotel.setPhone(result.path("formatted_phone_number").asText());
-                        // Para añadir mas campos campos como email, description, etc.
+                        
                         hotels.add(hotel);
+                        //Save rooms en database
+                        
                     }
                     // Guardar los hoteles encontrados en la base de datos
-                    hotelRepository.saveAll(hotels);
+                    //hotelRepository.saveAll(hotels);
                     return hotels;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -131,5 +148,50 @@ public class HotelServiceImpl implements HotelService {
                 throw new BadRequestException("Error deleting the hotel with ID " + id);
             }
         }
+    }
+
+
+    private static List<Room> createRandomRooms(Hotel hotel) {
+        List<Room> rooms = new ArrayList<>();
+        Random random = new Random();
+        int numberOfRooms = random.nextInt(8) + 3; // Entre 3 y 10 habitaciones
+
+
+        for (int i = 0; i < numberOfRooms; i++) {
+            Room room = new Room();
+            room.setPrice(generateRandomPrice());
+            room.setAvailable(generateRandomAvailability());
+            room.setDescription(generateRandomDescription(hotel.getName(), room.getPrice()));
+            rooms.add(room);
+        }
+
+        return rooms;
+    }
+
+    // Método para generar un precio aleatorio para una habitación
+    private static float generateRandomPrice() {
+        Random random = new Random();
+        float minPrice = 50.0f; // Precio mínimo
+        float maxPrice = 500.0f; // Precio máximo
+        return minPrice + random.nextFloat() * (maxPrice - minPrice);
+    }
+
+    // Método para generar disponibilidad aleatoria para una habitación
+    private static boolean generateRandomAvailability() {
+        Random random = new Random();
+        return random.nextBoolean();
+    }
+
+    // Método para generar una descripción aleatoria para una habitación
+    private static String generateRandomDescription(String hotelName, float price) {
+        String[] descriptions = {
+            "Habitación cómoda con vistas espectaculares a la ciudad. Precio: $" + price + " por noche.",
+            "Suite de lujo con todas las comodidades necesarias para una estancia relajante. Precio: $" + price + " por noche.",
+            "Habitación acogedora con decoración moderna y ambiente tranquilo. Precio: $" + price + " por noche.",
+            "Alojamiento espacioso y elegante con todas las comodidades necesarias. Precio: $" + price + " por noche."
+        };
+        Random random = new Random();
+        int index = random.nextInt(descriptions.length);
+        return descriptions[index];
     }
 }
