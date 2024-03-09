@@ -88,10 +88,11 @@ public class HotelServiceImpl implements HotelService {
                             hotel.setFotos(fotos);
                             hotel.setRating(rating);
                             List<Room> rooms = createRandomRooms(hotel);
-                            //hotel.setRooms(rooms);
-                            // for (Room room : rooms) {
-                            //     hotel.addRoom(room);
-                            // }
+                            
+                            for (Room room : rooms) {
+                                room.setHotel(hotel);;
+                            }
+                            hotel.setRooms(rooms);
                             hotelRepository.save(hotel);
                         }
 

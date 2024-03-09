@@ -2,8 +2,6 @@ package com.service.Hotels.models;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +20,6 @@ import lombok.Setter;
 public class Payment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonIgnore
   private Long id;
 
   @Column(name = "cuantity")

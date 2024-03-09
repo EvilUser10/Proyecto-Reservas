@@ -30,10 +30,16 @@ public class Hotel {
     private Double  rating;
 
     @OneToMany(mappedBy ="hotel", cascade = CascadeType.ALL)
-    List<Room> rooms;
+    private List<Room> rooms;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<Rating> ratings;
 
 
     public void actualizarDisponibilidad() {

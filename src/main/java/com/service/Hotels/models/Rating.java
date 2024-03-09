@@ -1,5 +1,4 @@
 package com.service.Hotels.models;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -22,7 +21,6 @@ import lombok.Setter;
 public class Rating {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonIgnore
   private Long id;
 
   @Column(name = "rating")
@@ -33,10 +31,12 @@ public class Rating {
 
   @ManyToOne
   @JoinColumn(name = "hotel_id")
+  @JsonIgnore
   private Hotel hotel;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
+  @JsonIgnore
   private User user;
 
 }

@@ -70,7 +70,6 @@ public class HotelController {
     }
 
     // Add a new hotel
-    @SuppressWarnings("null")
     @PostMapping("/hotel")
     public ResponseEntity<?> createHotel(@RequestBody Hotel newHotel) {
         EntityModel<Hotel> hotelModel = assembler.toModel(hotelService.addHotel(newHotel));

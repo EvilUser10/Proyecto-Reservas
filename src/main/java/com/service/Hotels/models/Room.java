@@ -1,15 +1,9 @@
 package com.service.Hotels.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-//import org.hibernate.mapping.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
 import jakarta.persistence.Column;  
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +23,6 @@ import lombok.Setter;
 public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @JsonIgnore
   private Long id;
 
   @Column(name = "price")
@@ -41,9 +34,9 @@ public class Room {
   @Column(name = "description")
   private String description;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  //@JsonBackReference
+  @ManyToOne
   @JoinColumn(name = "hotel_id")
+  @JsonIgnore
   private Hotel hotel;
 }
 

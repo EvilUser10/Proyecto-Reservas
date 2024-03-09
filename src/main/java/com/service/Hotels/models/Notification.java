@@ -2,7 +2,7 @@ package com.service.Hotels.models;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,11 +41,11 @@ public class Notification {
 
   @ManyToOne
   @JoinColumn(name = "hotel_id")
-  //@JsonBackReference
+  @JsonIgnore
   private Hotel hotel;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  @JsonBackReference
+  @JsonIgnore
   private User user;
 }
