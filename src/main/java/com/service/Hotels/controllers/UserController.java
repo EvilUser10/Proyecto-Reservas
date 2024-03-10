@@ -63,10 +63,9 @@ public class UserController {
         User userFind = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
 
+        userFind.setUsername(user.getUsername());
         userFind.setEmail(user.getEmail());
-        userFind.setName(user.getName());
-        userFind.setPassword(user.getPassword());
-        userFind.setSurname(user.getSurname());
+        userFind.setPassword(user.getPassword());;
 
         try {
             userRepository.save(userFind);

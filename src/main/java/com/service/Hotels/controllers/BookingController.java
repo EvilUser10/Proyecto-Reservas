@@ -43,9 +43,9 @@ public class BookingController {
         // }
 
         @GetMapping("/booking/{id}")
-        public Booking findUser(@PathVariable("id") Long id) {
+        public Booking findBooking(@PathVariable("id") Long id) {
             Booking optionalBooking = bookingRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Booking with id: " + id + "not found"));
+                    .orElseThrow(() -> new NotFoundException("Booking with id: " + id + " not found"));
             return optionalBooking;
         }
 
@@ -60,7 +60,7 @@ public class BookingController {
         }
 
         @PutMapping("/booking/{id}")
-        public ResponseEntity<Booking> editUser(@PathVariable("id") Long id, @RequestBody Booking booking) {
+        public ResponseEntity<Booking> editBooking(@PathVariable("id") Long id, @RequestBody Booking booking) {
 
             Booking bookingFind = bookingRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
@@ -68,7 +68,7 @@ public class BookingController {
             bookingFind.setFinishDate(booking.getFinishDate());
             bookingFind.setStartDate(booking.getStartDate());
             bookingFind.setState(booking.getState());
-            bookingFind.setUser(booking.getUser());
+            //bookingFind.setUser(booking.getUser());
             //bookingFind.setHotel(booking.getHotel());
             // bookingFind.setPayment(booking.getPayment());
 
@@ -81,7 +81,7 @@ public class BookingController {
         }
 
         @DeleteMapping("/booking/{id}")
-        public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        public ResponseEntity<Void> deleteBooking(@PathVariable("id") Long id) {
             if (bookingRepository.existsById(id)) {
                 try {
                     bookingRepository.deleteById(id);
