@@ -10,16 +10,19 @@ import io.jsonwebtoken.security.Keys;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import java.util.Date;
 import java.util.function.Function;
 import java.security.Key;
-import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 public class JwtService {
 
-  private static String SECRET_KEY = "586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
+  @Value("${token.signing.key}")  
+  private static String SECRET_KEY;;
 
   public String getToken(UserDetails user) {
     return getToken(new HashMap<>(), user);
