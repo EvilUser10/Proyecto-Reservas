@@ -26,6 +26,7 @@ import com.service.Hotels.exceptions.BadRequestException;
 //import javax.validation.constraints.Pattern;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/hotels")
