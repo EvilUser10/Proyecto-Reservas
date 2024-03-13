@@ -192,7 +192,8 @@ public class HotelServiceImpl implements HotelService {
         Random random = new Random();
         float minPrice = 50.0f; // Precio mínimo
         float maxPrice = 500.0f; // Precio máximo
-        return minPrice + random.nextFloat() * (maxPrice - minPrice);
+        float randomPrice =  minPrice + random.nextFloat() * (maxPrice - minPrice);
+        return Math.round(randomPrice * 100.0) / 100.0f;
     }
 
     // Método para generar disponibilidad aleatoria para una habitación
