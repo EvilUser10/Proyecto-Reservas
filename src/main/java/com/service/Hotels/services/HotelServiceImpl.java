@@ -117,7 +117,7 @@ public class HotelServiceImpl implements HotelService {
                             }
                             Random random = new Random();
                             int index = random.nextInt(rooms.size());
-                            hotel.setDescription(generateRandomDescription(hotel.getName(), rooms.get(index).getPrice(), "hotel"));;
+                            hotel.setDescription(generateRandomDescription(hotel.getName(), "hotel"));;
                             hotel.setRooms(rooms);
                             hotelRepository.save(hotel);
                         }
@@ -180,7 +180,7 @@ public class HotelServiceImpl implements HotelService {
             Room room = new Room();
             room.setPrice(generateRandomPrice());
             room.setAvailable(generateRandomAvailability());
-            room.setDescription(generateRandomDescription(hotel.getName(), room.getPrice(), "room"));
+            room.setDescription(generateRandomDescription(hotel.getName(), "room"));
             rooms.add(room);
         }
 
@@ -203,31 +203,31 @@ public class HotelServiceImpl implements HotelService {
     }
 
     // Método para generar una descripción aleatoria para una habitación
-    private static String generateRandomDescription(String hotelName, float price, String modelType) {
+    private static String generateRandomDescription(String hotelName, String modelType) {
         String[] hotelDescriptions = {
-            "Hotel " + hotelName + " te ofrece una experiencia única en el corazón de la ciudad. Precio: $" + price + " por noche.",
-            "Descubre el encanto y la elegancia de " + hotelName + " hotel. Precio: $" + price + " por noche.",
-            "Disfruta de la hospitalidad y el confort en " + hotelName + " hotel. Precio: $" + price + " por noche.",
-            "Experimenta la magia de " + hotelName + ", donde cada detalle está pensado para tu comodidad. Precio: $" + price + " por noche.",
-            "Sumérgete en el lujo y la tranquilidad de " + hotelName + ". Precio: $" + price + " por noche.",
-            "Déjate seducir por la atmósfera única de " + hotelName + ". Precio: $" + price + " por noche.",
-            "Relájate y rejuvenece en " + hotelName + ", tu refugio en la ciudad. Precio: $" + price + " por noche.",
-            "Embárcate en una aventura única en " + hotelName + ", donde cada rincón cuenta una historia. Precio: $" + price + " por noche.",
-            "Descubre un mundo de posibilidades en " + hotelName + ", donde tus sueños se hacen realidad. Precio: $" + price + " por noche.",
-            "Siente la esencia de " + hotelName + ", donde la elegancia se fusiona con el encanto local. Precio: $" + price + " por noche."
+            "Hotel " + hotelName + " te ofrece una experiencia única en el corazón de la ciudad. Precio: " + " por noche.",
+            "Descubre el encanto y la elegancia de " + hotelName + " hotel. Precio: " + " por noche.",
+            "Disfruta de la hospitalidad y el confort en " + hotelName + " hotel. Precio: " + " por noche.",
+            "Experimenta la magia de " + hotelName + ", donde cada detalle está pensado para tu comodidad. Precio: " + " por noche.",
+            "Sumérgete en el lujo y la tranquilidad de " + hotelName + ". Precio: " + " por noche.",
+            "Déjate seducir por la atmósfera única de " + hotelName + ". Precio: " + " por noche.",
+            "Relájate y rejuvenece en " + hotelName + ", tu refugio en la ciudad. Precio: " + " por noche.",
+            "Embárcate en una aventura única en " + hotelName + ", donde cada rincón cuenta una historia. Precio: " + " por noche.",
+            "Descubre un mundo de posibilidades en " + hotelName + ", donde tus sueños se hacen realidad. Precio: " + " por noche.",
+            "Siente la esencia de " + hotelName + ", donde la elegancia se fusiona con el encanto local. Precio: " + " por noche."
         };
         
         String[] roomDescriptions = {
-            "Habitación con vistas panorámicas y comodidades modernas. Precio: $" + price + " por noche.",
-            "Suite exclusiva con terraza privada y jacuzzi. Precio: $" + price + " por noche.",
-            "Acogedora habitación con detalles rústicos y vistas al jardín. Precio: $" + price + " por noche.",
-            "Alojamiento espacioso con zona de estar y decoración elegante. Precio: $" + price + " por noche.",
-            "Suite junior con vistas al mar y servicios de lujo. Precio: $" + price + " por noche.",
-            "Habitación familiar con espacios separados y entretenimiento para niños. Precio: $" + price + " por noche.",
-            "Suite de lujo con chimenea y servicios de conserjería personalizados. Precio: $" + price + " por noche.",
-            "Habitación ejecutiva con escritorio y conexión Wi-Fi de alta velocidad. Precio: $" + price + " por noche.",
-            "Suite premium con terraza privada y servicio de habitaciones las 24 horas. Precio: $" + price + " por noche.",
-            "Habitación temática diseñada para una experiencia única y memorables. Precio: $" + price + " por noche."
+            "Habitación con vistas panorámicas y comodidades modernas. Precio: " + " por noche.",
+            "Suite exclusiva con terraza privada y jacuzzi. Precio: " + " por noche.",
+            "Acogedora habitación con detalles rústicos y vistas al jardín. Precio: " + " por noche.",
+            "Alojamiento espacioso con zona de estar y decoración elegante. Precio: " + " por noche.",
+            "Suite junior con vistas al mar y servicios de lujo. Precio: " + " por noche.",
+            "Habitación familiar con espacios separados y entretenimiento para niños. Precio: " + " por noche.",
+            "Suite de lujo con chimenea y servicios de conserjería personalizados. Precio: " + " por noche.",
+            "Habitación ejecutiva con escritorio y conexión Wi-Fi de alta velocidad. Precio: " + " por noche.",
+            "Suite premium con terraza privada y servicio de habitaciones las 24 horas. Precio: " + " por noche.",
+            "Habitación temática diseñada para una experiencia única y memorables. Precio: " + " por noche."
         };
         
 
