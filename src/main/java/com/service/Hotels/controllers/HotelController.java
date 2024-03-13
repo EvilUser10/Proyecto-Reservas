@@ -3,11 +3,11 @@ package com.service.Hotels.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.service.Hotels.models.Hotel;
+import com.service.Hotels.models.User;
 import com.service.Hotels.services.HotelServiceImpl;
 
 import jakarta.websocket.server.PathParam;
 
 import com.service.Hotels.assemblers.HotelModelAssembler;
 import com.service.Hotels.exceptions.NotFoundException;
+import com.service.Hotels.interfaces.Role;
 import com.service.Hotels.exceptions.BadRequestException;
 //import javax.validation.constraints.Pattern;
 
@@ -43,24 +45,30 @@ public class HotelController {
 
     @GetMapping()
     public CollectionModel<EntityModel<Hotel>> getAll(
-        @RequestParam(defaultValue = "10") Integer max,
-        @RequestParam(defaultValue = "random") String orderby,
-        @RequestParam(required = false) String city) {
-        
+            @RequestParam(defaultValue = "10") Integer max,
+            @RequestParam(defaultValue = "random") String orderby,
+            @RequestParam(required = false) String city) {
+
         List<Hotel> hotels = hotelService.getAllHotels(max, orderby, city);
 
         if (hotels.isEmpty()) {
             throw new NotFoundException("No se encuentra ningún hotel con los criterios indicados");
         }
-
+        User userLoggedIn = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EntityModel<Hotel>> hotelModels = hotels.stream()
-                .map(assembler::toModel)
+                .map(hotel -> {
+                    // Excluir las propiedades bookings y notifications si el usuario no es un hotel
+                    if (!userLoggedIn.getRole().equals(Role.HOTEL)) {
+                        hotel.setBookings(null);
+                        hotel.setNotifications(null);
+                    }
+                    return assembler.toModel(hotel);
+                })
                 .collect(Collectors.toList());
-        
+
         return CollectionModel.of(hotelModels,
                 linkTo(methodOn(HotelController.class).getAll(max, orderby, city)).withSelfRel());
     }
-
 
     @GetMapping("/{city:[a-zA-Z]+}")
     public CollectionModel<EntityModel<Hotel>> getAll(@PathVariable String city) {
@@ -68,18 +76,28 @@ public class HotelController {
         if (hotels.isEmpty()) {
             throw new NotFoundException("No se encuentra ningún hotel en la ciudad de " + city);
         }
+        User userLoggedIn = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EntityModel<Hotel>> hotelModels = hotels.stream()
-                .map(assembler::toModel)
+                .map(hotel -> {
+                    // Excluir las propiedades bookings y notifications si el usuario no es un hotel
+                    if (!userLoggedIn.getRole().equals(Role.HOTEL)) {
+                        hotel.setBookings(null);
+                        hotel.setNotifications(null);
+                    }
+                    return assembler.toModel(hotel);
+                })
                 .collect(Collectors.toList());
+
         return CollectionModel.of(hotelModels, linkTo(methodOn(HotelController.class).getAll(city)).withSelfRel());
     }
 
     @GetMapping("/{city}/{id}")
     public EntityModel<Hotel> getHotel(@PathVariable String city, @PathVariable Long id) {
-        if(city == null || id == null){
+        if (city == null || id == null) {
             throw new BadRequestException("El city o el id no deben ser nulos");
         }
-        //Obtener la lista de hoteles en la ciudad dada
+        // Obtener la lista de hoteles en la ciudad dada
+        User userLoggedIn = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Hotel> hotels = hotelService.getAllHotelsByCity(city);
         if (hotels.size() <= 0) {
             throw new NotFoundException("No se encuentra ningún hotel en la ciudad de + " + city);
@@ -87,6 +105,13 @@ public class HotelController {
 
         // Buscar el hotel específico por su ID
         Hotel hotel = hotels.stream()
+                .map(h -> {
+                    if (!userLoggedIn.getRole().equals(Role.HOTEL)) {
+                        h.setBookings(null);
+                        h.setNotifications(null);
+                    }
+                    return h;
+                })
                 .filter(h -> h.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(
@@ -105,7 +130,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Hotel> updateHotel(@PathVariable long id, @RequestBody Hotel newhotel){
+    public ResponseEntity<Hotel> updateHotel(@PathVariable long id, @RequestBody Hotel newhotel) {
         Hotel hotel = hotelService.findHotelById(id);
 
         hotel.setAddress(newhotel.getAddress() == null ? hotel.getAddress() : newhotel.getAddress());
@@ -115,7 +140,7 @@ public class HotelController {
         hotel.setPhone(newhotel.getPhone() == null ? hotel.getPhone() : newhotel.getPhone());
         hotel.setFotos(newhotel.getFotos() == null ? hotel.getFotos() : newhotel.getFotos());
         hotel.setName(newhotel.getName());
-        
+
         Hotel hotelAdded = hotelService.addHotel(hotel);
         return ResponseEntity.ok(hotelAdded);
     }
