@@ -25,6 +25,8 @@ public class Hotel {
     private List<String> fotos;
 
     private String phone;
+    private Double latitud;
+    private Double longitud;
     private String email;
     private String description;
     private Double  rating;
