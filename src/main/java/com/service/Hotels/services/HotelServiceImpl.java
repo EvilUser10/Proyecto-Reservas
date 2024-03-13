@@ -10,6 +10,7 @@ import com.service.Hotels.validation.HotelValidation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.exceptions.BadRequestException;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.Comparator;
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -35,6 +37,28 @@ public class HotelServiceImpl implements HotelService {
 
     public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
+    }
+
+
+    
+
+    @Override
+    public List<Hotel> getAllHotels(Integer max, String orderby, String city) {
+        List<Hotel> hotelList = hotelRepository.findAll().stream()
+            .filter(hotel -> city == null || hotel.getCity().equalsIgnoreCase(city))
+            .limit(max)
+            .collect(Collectors.toList());
+        
+        if (orderby.equalsIgnoreCase("rating")) {
+            hotelList.sort(Comparator.comparing(Hotel::getRating).reversed());
+        } else if (orderby.equalsIgnoreCase("name")) {
+            hotelList.sort(Comparator.comparing(Hotel::getName));
+        } else if (orderby.equalsIgnoreCase("random")) {
+            // Ordenar aleatoriamente (manteniendo el orden actual)
+            Collections.shuffle(hotelList);
+        }
+        
+        return hotelList;
     }
 
     @Override

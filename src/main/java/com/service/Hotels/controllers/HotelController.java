@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.service.Hotels.models.Hotel;
 import com.service.Hotels.services.HotelServiceImpl;
+
+import jakarta.websocket.server.PathParam;
+
 import com.service.Hotels.assemblers.HotelModelAssembler;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.exceptions.BadRequestException;
@@ -36,6 +40,27 @@ public class HotelController {
     private HotelServiceImpl hotelService;
     @Autowired
     private HotelModelAssembler assembler;
+
+    @GetMapping()
+    public CollectionModel<EntityModel<Hotel>> getAll(
+        @RequestParam(defaultValue = "10") Integer max,
+        @RequestParam(defaultValue = "random") String orderby,
+        @RequestParam(required = false) String city) {
+        
+        List<Hotel> hotels = hotelService.getAllHotels(max, orderby, city);
+
+        if (hotels.isEmpty()) {
+            throw new NotFoundException("No se encuentra ningún hotel con los criterios indicados");
+        }
+
+        List<EntityModel<Hotel>> hotelModels = hotels.stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+        
+        return CollectionModel.of(hotelModels,
+                linkTo(methodOn(HotelController.class).getAll(max, orderby, city)).withSelfRel());
+    }
+
 
     @GetMapping("/{city:[a-zA-Z]+}")
     public CollectionModel<EntityModel<Hotel>> getAll(@PathVariable String city) {
