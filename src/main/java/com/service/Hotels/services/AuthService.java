@@ -6,6 +6,7 @@ import com.service.Hotels.config.Jwt.JwtService;
 import com.service.Hotels.controllers.Requests.AuthResponse;
 import com.service.Hotels.controllers.Requests.LoginRequest;
 import com.service.Hotels.controllers.Requests.RegisterRequest;
+import com.service.Hotels.exceptions.FieldAlreadyExistException;
 import com.service.Hotels.interfaces.Role;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,18 +37,41 @@ public class AuthService {
 
     }
 
-  public AuthResponse register(RegisterRequest request){
-    User user = User.builder()
-    .username(request.getUsername())
-    .password(passwordEncoder.encode(request.getPassword()))
-    .email(request.getEmail())
-    .role(Role.USER)
-    .build();
+    public User register(RegisterRequest request){
+        if (userRepository.existsByEmail(request.getEmail())){
+          throw new FieldAlreadyExistException(request.getEmail() + " already exists");
+        }
+        if (userRepository.existsByUsername(request.getUsername())){
+          throw new FieldAlreadyExistException(request.getUsername() + " already exists");
+        }
+        User user = User.builder()
+        .username(request.getUsername())
+        .password(passwordEncoder.encode(request.getPassword()))
+        .email(request.getEmail())
+        .role(Role.USER)
+        .build();
+    
+         return userRepository.save(user);
+      }
 
-    userRepository.save(user);
+  // public AuthResponse register(RegisterRequest request){
+  //   if (userRepository.existsByEmail(request.getEmail())){
+  //     throw new FieldAlreadyExistException(request.getEmail() + " already exists");
+  //   }
+  //   if (userRepository.existsByUsername(request.getUsername())){
+  //     throw new FieldAlreadyExistException(request.getUsername() + " already exists");
+  //   }
+  //   User user = User.builder()
+  //   .username(request.getUsername())
+  //   .password(passwordEncoder.encode(request.getPassword()))
+  //   .email(request.getEmail())
+  //   .role(Role.USER)
+  //   .build();
 
-    return AuthResponse.builder()
-    .token(jwtService.getToken(user))
-    .build();
-  }
+  //     userRepository.save(user);
+
+  //   return AuthResponse.builder()
+  //   .token(jwtService.getToken(user))
+  //   .build();
+  // }
 }

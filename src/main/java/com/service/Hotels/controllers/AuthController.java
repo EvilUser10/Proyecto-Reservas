@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.controllers.Requests.AuthResponse;
 import com.service.Hotels.controllers.Requests.LoginRequest;
 import com.service.Hotels.controllers.Requests.RegisterRequest;
+import com.service.Hotels.exceptions.FieldAlreadyExistException;
+import com.service.Hotels.models.User;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,12 +31,25 @@ public class AuthController {
   {
     return ResponseEntity.ok(authService.login(request));
   }
-
+  
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request)
+  public ResponseEntity<?> register(@RequestBody RegisterRequest request)
   {
-    return ResponseEntity.ok(authService.register(request));
+   try{
+          authService.register(request);
+          return ResponseEntity.ok("Registration successful!");
+
+        }catch (FieldAlreadyExistException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
   }
+
+
+  // @PostMapping("/register")
+  // public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request)
+  // {
+  //   return ResponseEntity.ok(authService.register(request));
+  // }
   
   
 }

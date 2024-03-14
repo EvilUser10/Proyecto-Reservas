@@ -36,18 +36,15 @@ public class User implements UserDetails{
 	@Enumerated(EnumType.STRING) 
     Role role;
 
-	@Column
+	@Column(name = "name")
+	@NonNull
+	private String name;
+
+	@Column(name = "username", unique = true)
 	@NonNull
 	private String username;
 
-	// @Column(name = "name")
-	// @NonNull
-	// private String name;
-
-	// @Column(name = "surname")
-	// private String surname;
-
-	@Column(name = "email")
+	@Column(name = "email", unique = true)
 	@NonNull
 	private String email;
 
