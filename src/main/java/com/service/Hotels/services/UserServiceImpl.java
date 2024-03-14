@@ -11,7 +11,7 @@ public class UserServiceImpl implements UserService {
   @Autowired
   UserRepository userRepository;
 
-  public User getUserByID(Long id) {
+  public User getUserById(Long id) {
     return userRepository.findById(id).get();
   }
 

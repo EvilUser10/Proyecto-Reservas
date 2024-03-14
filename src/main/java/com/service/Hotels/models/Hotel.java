@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 
 import java.util.*;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 @Data
 @Entity
 @AllArgsConstructor
@@ -43,13 +45,8 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<Rating> ratings;
 
-
     public void actualizarDisponibilidad() {
         //TODO: implementar la actualización de la disponibilidad del hotel
-    }
-
-    public void generarReporte() {
-        //TODO: implementar la logica de generar reporte del hotel
     }
 
     public void gestionarReservas() {

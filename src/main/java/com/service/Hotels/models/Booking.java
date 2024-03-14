@@ -1,6 +1,7 @@
 package com.service.Hotels.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,13 +34,18 @@ public class Booking {
 	private Long id;
 	
 	@Column(name = "start_date")
-	private Date startDate;
+	private LocalDate startDate;
 
 	@Column(name = "finish_date")
-	private Date finishDate;
+	private LocalDate finishDate;
 
     @Column(name = "state")
     private String state;
+
+
+    @Column(name = "confirmation_Code")
+    private String bookingConfirmationCode;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -54,5 +60,9 @@ public class Booking {
     @OneToOne
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private Payment payment;
+
+    public void setBookingConfirmationCode(String bookingConfirmationCode) {
+        this.bookingConfirmationCode = bookingConfirmationCode;
+    }
 
 }

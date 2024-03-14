@@ -38,5 +38,6 @@ public class Room {
   @JoinColumn(name = "hotel_id")
   @JsonIgnore
   private Hotel hotel;
+  
 }
 

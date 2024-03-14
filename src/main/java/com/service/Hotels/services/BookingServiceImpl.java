@@ -1,28 +1,62 @@
 package com.service.Hotels.services;
 
+import java.util.List;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.service.Hotels.exceptions.BadRequestException;
+import com.service.Hotels.exceptions.FieldInvalidException;
+import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.interfaces.BookingService;
 import com.service.Hotels.models.Booking;
+import com.service.Hotels.models.Hotel;
+import com.service.Hotels.models.Room;
+import com.service.Hotels.models.User;
 import com.service.Hotels.repositories.BookingRepository;
 
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
 
   @Autowired
   BookingRepository bookingRepository;
 
-  public Booking getBookingByID(Long id) {
+  @Autowired
+  HotelServiceImpl hotelService;
+  @Autowired
+  UserServiceImpl userService;
+
+  public Booking getBookingById(Long id) {
     return bookingRepository.findById(id).get();
   }
 
-  public Booking addBooking(Booking newBooking) {
-    try {
-      Booking booking = bookingRepository.save(newBooking);
-      return booking;
-    } catch (Exception e) {
-      throw new BadRequestException("Error adding new booking : " + newBooking);
+  @Override
+  public String addBooking(Long hotelId, Long userId, Booking bookingRequest) {
+    if (bookingRequest.getFinishDate().isBefore(bookingRequest.getStartDate())) {
+      throw new FieldInvalidException("Check-in date must come before check-out date");
     }
+    Hotel hotel = hotelService.findHotelById(hotelId);
+    User user = userService.getUserById(userId);
+
+    List<Room> rooms = hotel.getRooms();
+
+    Room roomAvailable = bookRoom(rooms);
+    if (roomAvailable != null) {
+      roomAvailable.setAvailable(false);
+    }
+    bookingRequest.setUser(user);
+    bookingRequest.setHotel(hotel);
+
+    String bookingCode = RandomStringUtils.randomNumeric(10);
+    bookingRequest.setBookingConfirmationCode(bookingCode);
+    bookingRepository.save(bookingRequest);
+    return bookingRequest.getBookingConfirmationCode();
+  }
+
+  private Room bookRoom(List<Room> rooms) {
+    return rooms.stream()
+        .filter(room -> room.getAvailable())
+        .findAny()
+        .orElse(null);
   }
 
   public void removeBooking(Long id) {
@@ -37,4 +71,19 @@ public class BookingServiceImpl implements BookingService{
       }
     }
   }
+
+  public Booking findByBookingConfirmationCode(String confirmationCode) {
+    return bookingRepository.findByBookingConfirmationCode(confirmationCode)
+        .orElseThrow(() -> new NotFoundException("No booking found with booking code :" + confirmationCode));
+  }
+
+  public List<Booking> getAllBookings() {
+    return bookingRepository.findAll();
+  }
+
+  @Override
+  public List<Booking> getBookingsByUserEmail(String email) {
+    return bookingRepository.findByGuestEmail(email);
+  }
+
 }

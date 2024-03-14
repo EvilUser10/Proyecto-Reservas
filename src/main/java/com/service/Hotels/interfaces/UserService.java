@@ -4,7 +4,7 @@ import com.service.Hotels.models.User;
 
 
 public interface UserService {
-  User getUserByID(Long id);
+  User getUserById(Long id);
   User addUser(User newUser);
   void removeUser(Long id);
 }
