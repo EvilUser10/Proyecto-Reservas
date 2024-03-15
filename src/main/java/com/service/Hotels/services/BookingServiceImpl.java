@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.FieldInvalidException;
@@ -15,6 +16,7 @@ import com.service.Hotels.models.Room;
 import com.service.Hotels.models.User;
 import com.service.Hotels.repositories.BookingRepository;
 
+@Service
 public class BookingServiceImpl implements BookingService {
 
   @Autowired
@@ -83,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   public List<Booking> getBookingsByUserEmail(String email) {
-    return bookingRepository.findByGuestEmail(email);
+    return bookingRepository.findByUserEmail(email);
   }
 
 }

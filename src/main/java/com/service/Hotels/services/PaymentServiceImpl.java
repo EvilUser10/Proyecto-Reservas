@@ -1,12 +1,14 @@
 package com.service.Hotels.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.interfaces.PaymentService;
 import com.service.Hotels.models.Payment;
 import com.service.Hotels.repositories.PaymentRepository;
 
+@Service
 public class PaymentServiceImpl implements PaymentService{
   @Autowired
   PaymentRepository paymentRepository;

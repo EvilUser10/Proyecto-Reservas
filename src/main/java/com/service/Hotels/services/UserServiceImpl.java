@@ -1,12 +1,13 @@
 package com.service.Hotels.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.interfaces.UserService;
 import com.service.Hotels.models.User;
 import com.service.Hotels.repositories.UserRepository;
-
+@Service
 public class UserServiceImpl implements UserService {
   @Autowired
   UserRepository userRepository;

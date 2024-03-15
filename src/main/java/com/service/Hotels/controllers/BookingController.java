@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +32,6 @@ import com.service.Hotels.services.HotelServiceImpl;
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
-
-    @Autowired
-    private BookingRepository bookingRepository;
 
     @Autowired
     private BookingServiceImpl bookingService;
@@ -70,8 +66,8 @@ public class BookingController {
     @PostMapping("/hotel/{hotelId}/booking")
     public ResponseEntity<?> createBooking(@PathVariable Long hotelId, @RequestBody Booking bookingRequest) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Long userId = ((User) authentication.getPrincipal()).getId();
+            //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = 1L;//((User) authentication.getPrincipal()).getId();
 
             String confirmationCode = bookingService.addBooking(hotelId, userId, bookingRequest);
             return ResponseEntity.ok(
@@ -121,7 +117,7 @@ public class BookingController {
         booking.getState(),
         booking.getBookingConfirmationCode(),
         hotel,
-        booking.getUser().getName(),
+        booking.getUser().getName() == null ? booking.getUser().getUsername() :booking.getUser().getName(),
         booking.getUser().getEmail());
     }
 
