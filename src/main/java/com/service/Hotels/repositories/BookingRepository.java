@@ -11,4 +11,5 @@ import com.service.Hotels.models.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Long>{
     Optional<Booking> findByBookingConfirmationCode(String confirmationCode);
     List<Booking> findByUserEmail(String email);
+    List<Booking>  findByUserId(Long userId);
 }

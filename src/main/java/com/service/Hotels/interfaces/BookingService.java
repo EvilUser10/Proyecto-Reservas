@@ -12,4 +12,5 @@ public interface BookingService {
   void removeBooking(Long id);
   Booking findByBookingConfirmationCode(String confirmationCode);
   List<Booking> getBookingsByUserEmail(String email);
+  List<Booking>  getBookingsByUserId(Long userId);
 }

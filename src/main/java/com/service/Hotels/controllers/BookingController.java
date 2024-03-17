@@ -66,8 +66,8 @@ public class BookingController {
     @PostMapping("/hotel/{hotelId}/booking")
     public ResponseEntity<?> createBooking(@PathVariable Long hotelId, @RequestBody Booking bookingRequest) {
         try {
-            //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Long userId = 1L;//((User) authentication.getPrincipal()).getId();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = ((User) authentication.getPrincipal()).getId();
 
             String confirmationCode = bookingService.addBooking(hotelId, userId, bookingRequest);
             return ResponseEntity.ok(
@@ -81,6 +81,17 @@ public class BookingController {
     @GetMapping("/user/{email}/bookings")
     public ResponseEntity<List<BookingDto>> getBookingsByUserEmail(@PathVariable String email) {
         List<Booking> bookings = bookingService.getBookingsByUserEmail(email);
+        List<BookingDto> bookingResponses = new ArrayList<>();
+        for (Booking booking : bookings) {
+            BookingDto bookingResponse = getBookingResponse(booking);
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok(bookingResponses);
+    }
+
+    @GetMapping("/user/{userId}/bookings")
+    public ResponseEntity<List<BookingDto>> getBookingsByUserId(@PathVariable Long userId) {
+        List<Booking> bookings = bookingService.getBookingsByUserId(userId);
         List<BookingDto> bookingResponses = new ArrayList<>();
         for (Booking booking : bookings) {
             BookingDto bookingResponse = getBookingResponse(booking);

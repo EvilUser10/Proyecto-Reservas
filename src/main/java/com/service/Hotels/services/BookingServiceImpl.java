@@ -88,4 +88,10 @@ public class BookingServiceImpl implements BookingService {
     return bookingRepository.findByUserEmail(email);
   }
 
+  @Override
+  public List<Booking> getBookingsByUserId(Long userId) {
+    return bookingRepository.findByUserId(userId);
+   
+  }
+
 }

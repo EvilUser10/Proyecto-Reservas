@@ -2,6 +2,9 @@ package com.service.Hotels.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,40 +14,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.repositories.UserRepository;
+import com.service.Hotels.services.UserServiceImpl;
+
 import java.util.List;
 
+import com.service.Hotels.dto.UserDto;
 import com.service.Hotels.exceptions.BadRequestException;
+import com.service.Hotels.exceptions.ForbiddenException;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.User;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/users")
+    @Autowired
+    private UserServiceImpl userService;
+
+    @GetMapping()
     public List<User> allUsers() {
         return userRepository.findAll();
     }
 
-    // @GetMapping("/user/{id}")
-    // public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
-    // Optional<User> optionalUser = userRepository.findById(id);
-    // if (optionalUser.isPresent()) {
-    // User user = optionalUser.get();
-    // return ResponseEntity.ok(user);
-    // } else {
-    // return ResponseEntity.notFound().build();
-    // }
-    // }
+    @GetMapping("/profile/{userId}")
+    public UserDto getUserProfile(@PathVariable Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = userService.getUserById(userId);
+            return new UserDto(user);
+        } else {
+           throw new ForbiddenException("Access denied");
+        }
+    }
 
-    @GetMapping("/user/{id}")
-    public User findUser(@PathVariable("id") Long id) {
-        User optionalUser = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
-        return optionalUser;
+    @GetMapping("/user/{userName}")
+    public UserDto findUser(@PathVariable("userName") String userName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = userService.getUserByUserName(userName);
+            return new UserDto(user);
+        } else {
+           throw new ForbiddenException("Access denied");
+        }
     }
 
     @PostMapping("/user")
@@ -59,6 +73,9 @@ public class UserController {
 
     @PutMapping("/user/{id}")
     public ResponseEntity<User> editUser(@PathVariable("id") Long id, @RequestBody User user) {
+        if (id == null) {
+            throw new BadRequestException("The Id cannot be null.");
+        }
 
         User userFind = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
@@ -77,6 +94,9 @@ public class UserController {
 
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        if (id == null) {
+            throw new BadRequestException("The Id cannot be null.");
+        }
         if (userRepository.existsById(id)) {
             try {
                 userRepository.deleteById(id);
