@@ -3,15 +3,16 @@ package com.service.Hotels.exceptions;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 //import org.springframework.security.access.AccessDeniedException;
 //TODO: Implementar cuando se añade la seguridad.
@@ -19,7 +20,7 @@ import com.service.Hotels.errors.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalException {
 
     @ResponseBody
@@ -55,7 +56,7 @@ public class GlobalException {
     }
 
     @ResponseBody
-    @ExceptionHandler(ForbiddenException.class)
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handlerForbiddenException(Exception ex, HttpServletRequest request) {
        return new ErrorResponse(HttpStatus.FORBIDDEN, ex, request.getRequestURI());
