@@ -65,7 +65,7 @@ public class BookingController {
     }
 
     @PostMapping("/hotel/{hotelId}/booking")
-    public ResponseEntity<?> createBooking(@PathVariable Long hotelId, @RequestBody Booking bookingRequest) {
+    public ResponseEntity<?> createBooking(@PathVariable Long hotelId, @RequestBody BookingDto bookingRequest) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Long userId = ((User) authentication.getPrincipal()).getId();
@@ -124,13 +124,10 @@ public class BookingController {
         theHotel.getDescription(),
         theHotel.getRating()
         );
-        return new BookingDto(booking.getId(),
+        return new BookingDto(
         booking.getStartDate(),
         booking.getFinishDate(),
-        //booking.getState(),
-        BookingStatus.CONFIRMED,
-        booking.getBookingConfirmationCode(),
-        hotel,
+        hotel.getId().toString(),
         booking.getUser().getName() == null ? booking.getUser().getUsername() :booking.getUser().getName(),
         booking.getUser().getEmail());
     }

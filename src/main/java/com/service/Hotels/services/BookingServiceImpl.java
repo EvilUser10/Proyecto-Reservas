@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.service.Hotels.dto.BookingDto;
 import com.service.Hotels.enums.BookingStatus;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.FieldInvalidException;
@@ -33,10 +34,15 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public String addBooking(Long hotelId, Long userId, Booking bookingRequest) {
+  public String addBooking(Long hotelId, Long userId, BookingDto bookingRequest) {
+    Booking booking = new Booking();
+
     if (bookingRequest.getFinishDate().isBefore(bookingRequest.getStartDate())) {
       throw new FieldInvalidException("Check-in date must come before check-out date");
     }
+
+    booking.setStartDate(bookingRequest.getStartDate());
+    booking.setFinishDate(bookingRequest.getFinishDate());
     Hotel hotel = hotelService.findHotelById(hotelId);
     User user = userService.getUserById(userId);
 
@@ -46,17 +52,19 @@ public class BookingServiceImpl implements BookingService {
     if (roomAvailable != null) {
       roomAvailable.setAvailable(false);
     }
-    bookingRequest.setUser(user);
-    bookingRequest.setHotel(hotel);
 
+    booking.setUser(user);
+    booking.setHotel(hotel);
+
+    
     String bookingCode = RandomStringUtils.randomNumeric(10);
-    bookingRequest.setBookingConfirmationCode(bookingCode);
-    bookingRequest.setState(BookingStatus.CONFIRMED);
+    booking.setBookingConfirmationCode(bookingCode);
+    booking.setState(BookingStatus.CONFIRMED);
 
 
-    bookingRepository.save(bookingRequest);
+    bookingRepository.save(booking);
 
-    return bookingRequest.getBookingConfirmationCode();
+    return booking.getBookingConfirmationCode();
   }
 
   private Room bookRoom(List<Room> rooms) {

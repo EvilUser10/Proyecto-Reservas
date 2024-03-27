@@ -2,12 +2,13 @@ package com.service.Hotels.interfaces;
 
 import java.util.List;
 
+import com.service.Hotels.dto.BookingDto;
 import com.service.Hotels.models.Booking;
 
 public interface BookingService {
   Booking getBookingById(Long id);
 
-  String addBooking(Long hotelId, Long userId, Booking bookingRequest);
+  String addBooking(Long hotelId, Long userId, BookingDto bookingRequest);
 
   void removeBooking(Long id);
   Booking findByBookingConfirmationCode(String confirmationCode);

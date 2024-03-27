@@ -10,17 +10,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDto {
-	private Long id;
-	
+
 	private LocalDate startDate;
 
 	private LocalDate finishDate;
 
-    private BookingStatus state;
-
-    private String bookingConfirmationCode;
-
-    private HotelDto hotel;
+    private String hotel_id;
     private String guestName ;
     private String guestEmail ;
 
