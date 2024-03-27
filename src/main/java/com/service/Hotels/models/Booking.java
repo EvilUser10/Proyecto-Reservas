@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.service.Hotels.enums.BookingStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +41,7 @@ public class Booking {
 	private LocalDate finishDate;
 
     @Column(name = "state")
-    private String state;
+    private BookingStatus state;
 
 
     @Column(name = "confirmation_Code")

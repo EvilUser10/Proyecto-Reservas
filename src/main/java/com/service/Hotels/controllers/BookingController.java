@@ -28,6 +28,7 @@ import com.service.Hotels.models.User;
 import com.service.Hotels.repositories.BookingRepository;
 import com.service.Hotels.services.BookingServiceImpl;
 import com.service.Hotels.services.HotelServiceImpl;
+import com.service.Hotels.enums.BookingStatus;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -101,9 +102,10 @@ public class BookingController {
     }
 
     @DeleteMapping("/{bookingId}/cancel")
-    public ResponseEntity<Void> deleteBooking(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteBooking(@PathVariable("bookingId") Long id) {
         bookingService.removeBooking(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+            "La reserva con el ID:" + id + "Ha sido cancelado");
     }
 
 
@@ -125,7 +127,8 @@ public class BookingController {
         return new BookingDto(booking.getId(),
         booking.getStartDate(),
         booking.getFinishDate(),
-        booking.getState(),
+        //booking.getState(),
+        BookingStatus.CONFIRMED,
         booking.getBookingConfirmationCode(),
         hotel,
         booking.getUser().getName() == null ? booking.getUser().getUsername() :booking.getUser().getName(),

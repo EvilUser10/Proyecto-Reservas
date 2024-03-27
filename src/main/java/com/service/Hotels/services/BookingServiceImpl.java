@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.service.Hotels.enums.BookingStatus;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.FieldInvalidException;
 import com.service.Hotels.exceptions.NotFoundException;
@@ -50,7 +51,11 @@ public class BookingServiceImpl implements BookingService {
 
     String bookingCode = RandomStringUtils.randomNumeric(10);
     bookingRequest.setBookingConfirmationCode(bookingCode);
+    bookingRequest.setState(BookingStatus.CONFIRMED);
+
+
     bookingRepository.save(bookingRequest);
+
     return bookingRequest.getBookingConfirmationCode();
   }
 
@@ -65,13 +70,16 @@ public class BookingServiceImpl implements BookingService {
     if (id == null) {
       throw new BadRequestException("The ID cannot be null");
     }
-    if (bookingRepository.existsById(id)) {
+    Booking booking = bookingRepository.findById(id).orElseThrow(() -> new NotFoundException("No booking found"));
       try {
+        //Antes de borrar una reserva o despues hay que hacer la modificacion en habitacion, a ponerla como aviable.
+        //Get the booking
+        //Hote hotel = hotelService.find
+        
         bookingRepository.deleteById(id);
       } catch (IllegalArgumentException ex) {
         throw new BadRequestException("Error deleting the booking with ID " + id);
       }
-    }
   }
 
   public Booking findByBookingConfirmationCode(String confirmationCode) {
@@ -94,4 +102,6 @@ public class BookingServiceImpl implements BookingService {
    
   }
 
+
+ 
 }

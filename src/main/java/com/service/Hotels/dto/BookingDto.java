@@ -2,6 +2,8 @@ package com.service.Hotels.dto;
 
 import java.time.LocalDate;
 
+import com.service.Hotels.enums.BookingStatus;
+
 import lombok.*;
 
 @Data
@@ -14,12 +16,11 @@ public class BookingDto {
 
 	private LocalDate finishDate;
 
-    private String state;
-
+    private BookingStatus state;
 
     private String bookingConfirmationCode;
 
-    private HotelDto room;
+    private HotelDto hotel;
     private String guestName ;
     private String guestEmail ;
 
