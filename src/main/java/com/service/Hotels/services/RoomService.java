@@ -1,25 +1,36 @@
 package com.service.Hotels.services;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
 
+import com.service.Hotels.assemblers.RoomModelAssembler;
+import com.service.Hotels.controllers.RoomController;
+import com.service.Hotels.dto.RoomDto;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.ConflictException;
 import com.service.Hotels.exceptions.NotFoundException;
-import com.service.Hotels.interfaces.RoomService;
 import com.service.Hotels.models.Room;
 import com.service.Hotels.repositories.RoomRepository;
 
 @Service
-public class RoomServiceImp implements RoomService{
+public class RoomService {
 
     @Autowired
     private RoomRepository repository;
-    @Override
+
+    @Autowired
+    private RoomModelAssembler assembler;
+
     public List<Room> getAllByHotelId(Long id) {
         if (id == null) {
             throw new BadRequestException("The ID cannot be null");
@@ -31,21 +42,28 @@ public class RoomServiceImp implements RoomService{
         return entities;
     }
 
-    @Override
-    public Room findById(Long id) {
-        // TODO Solo si necesitamos ver las informaciones del habitacion. en este caso NO.
-        throw new UnsupportedOperationException("Unimplemented method 'findById': NO necesitamos ver las informaciones del habitacion");
+    public CollectionModel<EntityModel<Room>> getAll(Long id) {
+        // if (id == null) {
+        //     throw new BadRequestException("The ID cannot be null");
+        // }
+        List<Room> rooms = this.getAllByHotelId(id);
+        // if (rooms.isEmpty()) {
+        //     throw new NotFoundException("Not room found!");
+        // }
+        List<EntityModel<Room>> roomsModels = rooms.stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(roomsModels, linkTo(methodOn(RoomController.class).getAll(id)).withSelfRel());
     }
 
-    @Override
     public Room add(Room newRoom) {
         if (newRoom == null) {
             throw new BadRequestException("The room to add is null");
         }
-       try {
+        try {
             return repository.save(newRoom);
         } catch (DataIntegrityViolationException e) {
-             // si hay violacion en la clave única o intentadno insertar un intedad ya
+            // si hay violacion en la clave única o intentadno insertar un intedad ya
             throw new ConflictException("Error adding entity: Data integrity violation");
         } catch (Exception e) {
             // Si ocurre cualquier otra excepción no esperada
@@ -53,7 +71,6 @@ public class RoomServiceImp implements RoomService{
         }
     }
 
-    @Override
     public Room update(Room newRoom) {
         if (newRoom == null) {
             throw new BadRequestException("The room to add is null");
@@ -61,16 +78,13 @@ public class RoomServiceImp implements RoomService{
         try {
             Room entityUpdated = repository.save(newRoom);
             return entityUpdated;
-        } 
-        catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Error updating Room: Data integrity violation");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new BadRequestException("Error updating Room ");
         }
     }
 
-    @Override
     public void remove(Long id) {
         if (id == null) {
             throw new BadRequestException("Ehe ID cannot be null");
@@ -84,5 +98,20 @@ public class RoomServiceImp implements RoomService{
         }
     }
 
-    
+    public Room updateRoom(Long id, RoomDto roomDto) {
+        Room room = this.findById(id);
+        if (room == null) {
+            throw new NotFoundException("Room with id: " + id + " was not found");
+        }
+        room.setAvailable(roomDto.getAvailable() == null ? room.getAvailable() : roomDto.getAvailable());
+        room.setDescription(roomDto.getDescription() == null ? room.getDescription() : roomDto.getDescription());
+        room.setPrice(roomDto.getPrice() == null ? room.getPrice() : roomDto.getPrice());
+        repository.save(room);
+        return room;
+    }
+
+    private Room findById(Long id) {
+        return repository.findById(id).get();
+    }
+
 }

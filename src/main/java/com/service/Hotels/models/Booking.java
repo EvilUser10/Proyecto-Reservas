@@ -1,6 +1,5 @@
 package com.service.Hotels.models;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,32 +20,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(includeFieldNames=true)
+@ToString(includeFieldNames = true)
 @Entity
 @Table(name = "bookings")
 public class Booking {
     @Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(name = "start_date")
-	private LocalDate startDate;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "finish_date")
-	private LocalDate finishDate;
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "finish_date")
+    private LocalDate finishDate;
 
     @Column(name = "state")
     private BookingStatus state;
 
-
     @Column(name = "confirmation_Code")
     private String bookingConfirmationCode;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -58,12 +54,8 @@ public class Booking {
     @JsonIgnore
     private Hotel hotel;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id", referencedColumnName = "id")
-    private Payment payment;
-
-    public void setBookingConfirmationCode(String bookingConfirmationCode) {
-        this.bookingConfirmationCode = bookingConfirmationCode;
-    }
+    // @OneToOne
+    // @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    // private Payment payment;
 
 }

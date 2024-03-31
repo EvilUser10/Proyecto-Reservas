@@ -2,18 +2,23 @@ package com.service.Hotels.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.service.Hotels.exceptions.BadRequestException;
-import com.service.Hotels.interfaces.PaymentService;
+import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Payment;
 import com.service.Hotels.repositories.PaymentRepository;
 
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentService {
   @Autowired
   PaymentRepository paymentRepository;
 
   public Payment getPaymentByID(Long id) {
+    if (id == null) {
+      throw new IllegalArgumentException("ID can not be null");
+    }
+    if (paymentRepository.findById(id) == null) {
+      throw new NotFoundException("Booking with ID: " + id + "was not found");
+    }
     return paymentRepository.findById(id).get();
   }
 
@@ -26,7 +31,7 @@ public class PaymentServiceImpl implements PaymentService{
     }
   }
 
-  public void removePayment(Long id) {
+  public void deletePayment(Long id) {
     if (id == null) {
       throw new BadRequestException("The ID cannot be null");
     }
@@ -38,4 +43,21 @@ public class PaymentServiceImpl implements PaymentService{
       }
     }
   }
+
+  public Payment editPayment(Long id, Payment payment) {
+    Payment paymentFind = paymentRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Payment with id: " + id + "not found"));
+
+    paymentFind.setCuantity(payment.getCuantity());
+    paymentFind.setPaymentMethod(payment.getPaymentMethod());
+    paymentFind.setDate(payment.getDate());
+    paymentFind.setState(payment.getState());
+
+    try {
+      return paymentRepository.save(paymentFind);
+    } catch (Exception e) {
+      throw (new BadRequestException("The payment has couldn't been modified"));
+    }
+  }
+
 }
