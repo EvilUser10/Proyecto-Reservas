@@ -16,48 +16,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.service.Hotels.dto.BookingDto;
-import com.service.Hotels.dto.HotelDto;
 import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Booking;
-import com.service.Hotels.models.Hotel;
-import com.service.Hotels.models.Room;
 import com.service.Hotels.models.User;
-import com.service.Hotels.repositories.BookingRepository;
-import com.service.Hotels.services.BookingServiceImpl;
-import com.service.Hotels.services.HotelServiceImpl;
-import com.service.Hotels.enums.BookingStatus;
+import com.service.Hotels.services.BookingService;
 
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
 
     @Autowired
-    private BookingServiceImpl bookingService;
+    private BookingService bookingService;
 
-    @Autowired
-    private HotelServiceImpl hotelService;
 
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BookingDto>> allBookings() {
         List<Booking> bookings = bookingService.getAllBookings();
         List<BookingDto> bookingResponses = new ArrayList<>();
-        for (Booking booking : bookings){
-            BookingDto bookingResponse = getBookingResponse(booking);
+        for (Booking booking : bookings) {
+            BookingDto bookingResponse = convertToBookingDto(booking);
             bookingResponses.add(bookingResponse);
         }
         return ResponseEntity.ok(bookingResponses);
-        //return bookingRepository.findAll();
+        // return bookingRepository.findAll();
     }
 
     @GetMapping("/confirmation/{confirmationCode}")
     public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
         try {
             Booking booking = bookingService.findByBookingConfirmationCode(confirmationCode);
-            BookingDto bookingResponse = getBookingResponse(booking);
+            BookingDto bookingResponse = convertToBookingDto(booking);
             return ResponseEntity.ok(bookingResponse);
         } catch (NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -69,22 +60,19 @@ public class BookingController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Long userId = ((User) authentication.getPrincipal()).getId();
-
-            String confirmationCode = bookingService.addBooking(hotelId, userId, bookingRequest);
-            return ResponseEntity.ok(
-                    "The hotel booked successfully, Your booking confirmation code is :" + confirmationCode);
+            Booking booking = bookingService.addBooking(hotelId, userId, bookingRequest);
+            return ResponseEntity.ok(booking);
         } catch (Exception e) {
-            throw (new BadRequestException("La reserva no se ha podido crear."));
+            throw (new BadRequestException("La reserva no se ha podido crear. " + e));
         }
     }
-
 
     @GetMapping("/user/{email}/bookings")
     public ResponseEntity<List<BookingDto>> getBookingsByUserEmail(@PathVariable String email) {
         List<Booking> bookings = bookingService.getBookingsByUserEmail(email);
         List<BookingDto> bookingResponses = new ArrayList<>();
         for (Booking booking : bookings) {
-            BookingDto bookingResponse = getBookingResponse(booking);
+            BookingDto bookingResponse = convertToBookingDto(booking);
             bookingResponses.add(bookingResponse);
         }
         return ResponseEntity.ok(bookingResponses);
@@ -95,7 +83,7 @@ public class BookingController {
         List<Booking> bookings = bookingService.getBookingsByUserId(userId);
         List<BookingDto> bookingResponses = new ArrayList<>();
         for (Booking booking : bookings) {
-            BookingDto bookingResponse = getBookingResponse(booking);
+            BookingDto bookingResponse = convertToBookingDto(booking);
             bookingResponses.add(bookingResponse);
         }
         return ResponseEntity.ok(bookingResponses);
@@ -105,32 +93,45 @@ public class BookingController {
     public ResponseEntity<?> deleteBooking(@PathVariable("bookingId") Long id) {
         bookingService.removeBooking(id);
         return ResponseEntity.ok(
-            "La reserva con el ID:" + id + "Ha sido cancelado");
+                "La reserva con el ID:" + id + "Ha sido cancelado");
     }
 
+    private BookingDto convertToBookingDto(Booking booking) {
+        // Aquí conviertes el objeto Booking a BookingDto
+        // Por ejemplo:
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setStartDate(booking.getStartDate().toString());
+        bookingDto.setFinishDate(booking.getFinishDate().toString());
+        // Asegúrate de establecer todas las propiedades necesarias en BookingDto
 
-    private BookingDto getBookingResponse(Booking booking) {
-        Hotel theHotel = hotelService.findHotelById(booking.getHotel().getId());
-        HotelDto hotel = new HotelDto(
-            theHotel.getId(),
-        theHotel.getName(),
-        theHotel.getAddress(),
-        theHotel.getCity(),
-        theHotel.getFotos(),
-        theHotel.getPhone(),
-        theHotel.getLatitud(), 
-        theHotel.getLongitud(), 
-        theHotel.getEmail(),
-        theHotel.getDescription(),
-        theHotel.getRating()
-        );
-        return new BookingDto(
-        booking.getStartDate(),
-        booking.getFinishDate(),
-        hotel.getId().toString(),
-        booking.getUser().getName() == null ? booking.getUser().getUsername() :booking.getUser().getName(),
-        booking.getUser().getEmail());
+        return bookingDto;
     }
 
-     
+    // private BookingDto getBookingResponse(Booking booking) {
+    // Hotel theHotel = hotelService.findHotelById(booking.getHotel().getId());
+    // HotelDto hotel = new HotelDto(
+    // theHotel.getId(),
+    // theHotel.getName(),
+    // theHotel.getAddress(),
+    // theHotel.getCity(),
+    // theHotel.getFotos(),
+    // theHotel.getPhone(),
+    // theHotel.getLatitud(),
+    // theHotel.getLongitud(),
+    // theHotel.getEmail(),
+    // theHotel.getDescription(),
+    // theHotel.getRating()
+    // );
+    // return new BookingDto(booking.getId(),
+    // booking.getStartDate(),
+    // booking.getFinishDate(),
+    // //booking.getState(),
+    // BookingStatus.CONFIRMED,
+    // booking.getBookingConfirmationCode(),
+    // hotel,
+    // booking.getUser().getName() == null ? booking.getUser().getUsername()
+    // :booking.getUser().getName(),
+    // booking.getUser().getEmail());
+    // }
+
 }

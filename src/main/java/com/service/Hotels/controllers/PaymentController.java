@@ -1,7 +1,5 @@
 package com.service.Hotels.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,82 +10,42 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.service.Hotels.exceptions.BadRequestException;
-import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Payment;
 import com.service.Hotels.repositories.PaymentRepository;
+import com.service.Hotels.services.PaymentService;
 
 @RestController
 @RequestMapping("/api")
 public class PaymentController {
-  @Autowired
-  PaymentRepository paymentRepository;
+    @Autowired
+    PaymentRepository paymentRepository;
 
- @GetMapping("/payment")
-    public List<Payment> allPayments() {
-        return paymentRepository.findAll();
+    @Autowired
+    PaymentService paymentService;
+
+    @GetMapping("/payment")
+    public ResponseEntity<?> allPayments() {
+        return ResponseEntity.ok(paymentRepository.findAll());
     }
 
-    // @GetMapping("/user/{id}")
-    // public ResponseEntity<?> findUser(@PathVariable("id") Long id) {
-    // Optional<User> optionalUser = userRepository.findById(id);
-    // if (optionalUser.isPresent()) {
-    // User user = optionalUser.get();
-    // return ResponseEntity.ok(user);
-    // } else {
-    // return ResponseEntity.notFound().build();
-    // }
-    // }
-
     @GetMapping("/payment/{id}")
-    public Payment findPayment(@PathVariable("id") Long id) {
-      Payment optionalPayment = paymentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Payment with id: " + id + "not found"));
-        return optionalPayment;
+    public ResponseEntity<Payment> findPayment(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(paymentService.getPaymentByID(id));
     }
 
     @PostMapping("/payment")
-    public Payment createPayment(@RequestBody Payment newPayment) {
-        try {
-            Payment savedPayment = paymentRepository.save(newPayment);
-            return savedPayment;
-        } catch (Exception e) {
-            throw (new BadRequestException("The payment has couldn't been made"));
-        }
+    public ResponseEntity<Payment> createPayment(@RequestBody Payment newPayment) {
+        return ResponseEntity.ok(paymentService.addPayment(newPayment));
     }
 
     @PutMapping("/payment/{id}")
     public ResponseEntity<Payment> editPayment(@PathVariable("id") Long id, @RequestBody Payment payment) {
-
-        Payment paymentFind = paymentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Payment with id: " + id + "not found"));
-
-                paymentFind.setCuantity(payment.getCuantity());
-                paymentFind.setPaymentMethod(payment.getPaymentMethod());
-                paymentFind.setDate(payment.getDate());
-                paymentFind.setState(payment.getState());
-
-        try {
-          paymentRepository.save(paymentFind);
-            return ResponseEntity.ok(payment);
-        } catch (Exception e) {
-            throw (new BadRequestException("The payment has couldn't been modified"));
-        }
+        return ResponseEntity.ok(paymentService.editPayment(id, payment));
     }
 
     @DeleteMapping("/payment/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-        if (paymentRepository.existsById(id)) {
-            try {
-              paymentRepository.deleteById(id);
-
-            } catch (Exception e) {
-                throw new BadRequestException("The payment with id: " + id + " couldn't be deleted");
-            }
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new NotFoundException("The payment with id: " + id + " wasn't found");
-        }
+    public ResponseEntity<String> deletePayment(@PathVariable("id") Long id) {
+        paymentService.deletePayment(id);
+        return ResponseEntity.ok("Pago con id" + id + "borrado correctamente");
     }
 }

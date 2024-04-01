@@ -1,9 +1,6 @@
 package com.service.Hotels.dto;
 
 import java.util.List;
-
-import com.service.Hotels.models.Room;
-
 import lombok.*;
 
 @Data

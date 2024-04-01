@@ -20,7 +20,7 @@ import com.service.Hotels.models.Hotel;
 import com.service.Hotels.models.Notification;
 import com.service.Hotels.models.User;
 import com.service.Hotels.repositories.UserRepository;
-import com.service.Hotels.services.HotelServiceImpl;
+import com.service.Hotels.services.HotelService;
 import com.service.Hotels.services.NotificationServiceImp;
 
 @RestController
@@ -30,7 +30,7 @@ public class NotificationController {
     private NotificationServiceImp service;
 
     @Autowired
-    private HotelServiceImpl hotelService;
+    private HotelService hotelService;
 
     @Autowired
     private UserRepository userService;
