@@ -22,7 +22,6 @@ import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Booking;
 import com.service.Hotels.models.User;
 import com.service.Hotels.services.BookingService;
-import com.service.Hotels.services.HotelService;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -31,8 +30,6 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    @Autowired
-    private HotelService hotelService;
 
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")

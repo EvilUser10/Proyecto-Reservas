@@ -110,8 +110,16 @@ public class RoomService {
         return room;
     }
 
+    public Room makeNotAvailableRoom(Long id){
+        Room room = this.findById(id);
+        room.setAvailable(false);
+        return repository.save(room);
+    }
+
     private Room findById(Long id) {
         return repository.findById(id).get();
     }
+
+    
 
 }

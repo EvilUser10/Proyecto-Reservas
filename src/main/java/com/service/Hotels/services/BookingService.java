@@ -1,10 +1,7 @@
 package com.service.Hotels.services;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -32,15 +29,17 @@ public class BookingService {
   HotelService hotelService;
   @Autowired
   UserService userService;
+  @Autowired
+  RoomService roomService;
 
-  public Booking getBookingById(Long id) {
-    if (id == null) {
+  public Booking getBookingById(Long hotelId) {
+    if (hotelId == null) {
       throw new IllegalArgumentException("ID can not be null");
     }
-    if (bookingRepository.findById(id) == null) {
-      throw new NotFoundException("Booking with ID: " + id + "was not found");
+    if (bookingRepository.findById(hotelId) == null) {
+      throw new NotFoundException("Booking with ID: " + hotelId + "was not found");
     }
-    return bookingRepository.findById(id).get();
+    return bookingRepository.findById(hotelId).get();
   }
 
   public Booking addBooking(Long hotelId, Long userId, BookingDto bookingRequest) {
@@ -51,11 +50,12 @@ public class BookingService {
       throw new FieldInvalidException("Check-in date must come before check-out date");
     }
     Booking booking = new Booking();
-
+    
     booking.setStartDate(startDate);
     booking.setFinishDate(finishDate);
     User user = userService.getUserById(userId);
-    Hotel hotel = hotelService.findHotelById(hotelId);
+    Hotel hotel = hotelService.findHotelById(bookingRequest.getRoomId());
+    roomService.makeNotAvailableRoom(bookingRequest.getRoomId());
     booking.setUser(user);
     booking.setHotel(hotel);
 

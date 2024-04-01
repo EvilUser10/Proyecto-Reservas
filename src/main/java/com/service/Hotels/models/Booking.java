@@ -54,6 +54,10 @@ public class Booking {
     @JsonIgnore
     private Hotel hotel;
 
+    @OneToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     // @OneToOne
     // @JoinColumn(name = "payment_id", referencedColumnName = "id")
     // private Payment payment;
