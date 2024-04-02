@@ -44,11 +44,25 @@ public class RoomService {
 
     public CollectionModel<EntityModel<Room>> getAll(Long id) {
         // if (id == null) {
-        //     throw new BadRequestException("The ID cannot be null");
+        // throw new BadRequestException("The ID cannot be null");
         // }
         List<Room> rooms = this.getAllByHotelId(id);
         // if (rooms.isEmpty()) {
-        //     throw new NotFoundException("Not room found!");
+        // throw new NotFoundException("Not room found!");
+        // }
+        List<EntityModel<Room>> roomsModels = rooms.stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(roomsModels, linkTo(methodOn(RoomController.class).getAll(id)).withSelfRel());
+    }
+
+    public CollectionModel<EntityModel<Room>> getAvailableRooms(Long id) {
+        // if (id == null) {
+        // throw new BadRequestException("The ID cannot be null");
+        // }
+        List<Room> rooms = repository.findByHotelIdAndAvailableIsTrue(id);
+        // if (rooms.isEmpty()) {
+        // throw new NotFoundException("Not room found!");
         // }
         List<EntityModel<Room>> roomsModels = rooms.stream()
                 .map(assembler::toModel)
@@ -110,16 +124,21 @@ public class RoomService {
         return room;
     }
 
-    public Room makeNotAvailableRoom(Long id){
+    public Room makeNotAvailableRoom(Long id) {
         Room room = this.findById(id);
         room.setAvailable(false);
         return repository.save(room);
     }
 
-    private Room findById(Long id) {
+    public Room findById(Long id) {
         return repository.findById(id).get();
     }
 
-    
-
+    public boolean checkRoomIsAvailable(Long id) {
+        Room room = this.findById(id);
+        if (room.getAvailable() == true) {
+            return true;
+        }
+        return false;
+    }
 }

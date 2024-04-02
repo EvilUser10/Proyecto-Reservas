@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.service.Hotels.dto.BookingDto;
-import com.service.Hotels.exceptions.BadRequestException;
 import com.service.Hotels.exceptions.NotFoundException;
 import com.service.Hotels.models.Booking;
 import com.service.Hotels.models.User;
@@ -57,14 +56,14 @@ public class BookingController {
 
     @PostMapping("/hotel/{hotelId}/booking")
     public ResponseEntity<?> createBooking(@PathVariable Long hotelId, @RequestBody BookingDto bookingRequest) {
-        try {
+        // try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Long userId = ((User) authentication.getPrincipal()).getId();
             Booking booking = bookingService.addBooking(hotelId, userId, bookingRequest);
             return ResponseEntity.ok(booking);
-        } catch (Exception e) {
-            throw (new BadRequestException("La reserva no se ha podido crear. " + e));
-        }
+        // } catch (Exception e) {
+        //     throw (new BadRequestException("La reserva no se ha podido crear. " + e));
+        // }
     }
 
     @GetMapping("/user/{email}/bookings")
@@ -89,8 +88,8 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponses);
     }
 
-    @DeleteMapping("/{bookingId}/cancel")
-    public ResponseEntity<?> deleteBooking(@PathVariable("bookingId") Long id) {
+    @DeleteMapping("/{id}/cancel")
+    public ResponseEntity<?> deleteBooking(@PathVariable("id") Long id) {
         bookingService.removeBooking(id);
         return ResponseEntity.ok(
                 "La reserva con el ID:" + id + "Ha sido cancelado");
@@ -100,8 +99,8 @@ public class BookingController {
         // Aquí conviertes el objeto Booking a BookingDto
         // Por ejemplo:
         BookingDto bookingDto = new BookingDto();
-        bookingDto.setStartDate(booking.getStartDate().toString());
-        bookingDto.setFinishDate(booking.getFinishDate().toString());
+        bookingDto.setStartDate(booking.getStartDate());
+        bookingDto.setFinishDate(booking.getFinishDate());
         // Asegúrate de establecer todas las propiedades necesarias en BookingDto
 
         return bookingDto;
