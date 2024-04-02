@@ -10,4 +10,5 @@ import com.service.Hotels.models.Room;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAllRoomsByHotelId(Long id);
+    List<Room> findByHotelIdAndAvailableIsTrue(Long hotelId);
 }

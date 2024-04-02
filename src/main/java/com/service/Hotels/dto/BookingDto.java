@@ -1,12 +1,14 @@
 package com.service.Hotels.dto;
 
+import java.time.LocalDate;
+
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDto {
-	private String startDate;
-    private String finishDate;
+	private LocalDate startDate;
+    private LocalDate finishDate;
     private Long roomId;
 }

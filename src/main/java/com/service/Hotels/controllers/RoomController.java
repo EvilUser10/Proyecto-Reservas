@@ -4,6 +4,7 @@ package com.service.Hotels.controllers;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +29,15 @@ public class RoomController {
     @Autowired
     private RoomModelAssembler assembler;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/hotel/{id}")
     public ResponseEntity<?> getAll(@PathVariable Long id) {
         return ResponseEntity.ok(service.getAll(id));
+    }
+
+    @GetMapping("hotel/{id}/availables")
+    public ResponseEntity<?> getAvailables(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAvailableRooms(id));
     }
 
     // Add a new hotel

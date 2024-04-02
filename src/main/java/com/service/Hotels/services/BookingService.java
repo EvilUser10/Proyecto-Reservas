@@ -1,11 +1,11 @@
 package com.service.Hotels.services;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 
 import com.service.Hotels.dto.BookingDto;
@@ -43,21 +43,29 @@ public class BookingService {
   }
 
   public Booking addBooking(Long hotelId, Long userId, BookingDto bookingRequest) {
-    LocalDate startDate = convertDate(bookingRequest.getStartDate());
-    LocalDate finishDate = convertDate(bookingRequest.getStartDate());
+    LocalDate startDate = bookingRequest.getStartDate();
+    LocalDate finishDate = bookingRequest.getStartDate();
 
     if (finishDate.isBefore(startDate)) {
       throw new FieldInvalidException("Check-in date must come before check-out date");
     }
+
+    if (!roomService.checkRoomIsAvailable(bookingRequest.getRoomId())) {
+      throw new RequestRejectedException("Room is not available for booking.");
+    }
+
     Booking booking = new Booking();
-    
-    booking.setStartDate(startDate);
-    booking.setFinishDate(finishDate);
     User user = userService.getUserById(userId);
     Hotel hotel = hotelService.findHotelById(bookingRequest.getRoomId());
-    roomService.makeNotAvailableRoom(bookingRequest.getRoomId());
+    Room room = roomService.findById(bookingRequest.getRoomId());
+
+    booking.setStartDate(startDate);
+    booking.setFinishDate(finishDate);
     booking.setUser(user);
     booking.setHotel(hotel);
+    booking.setRoom(room);
+
+    roomService.makeNotAvailableRoom(bookingRequest.getRoomId());
 
     String bookingCode = RandomStringUtils.randomNumeric(10);
     booking.setBookingConfirmationCode(bookingCode);
@@ -77,9 +85,9 @@ public class BookingService {
 
   public void removeBooking(Long id) {
     if (id == null) {
-      throw new BadRequestException("The ID cannot be null");
+      throw new BadRequestException("The confirmationCode cannot be null");
     }
-    if (bookingRepository.findById(id) != null) {
+    if (bookingRepository.findById(id) == null) {
       // Antes de borrar una reserva o despues hay que hacer la modificacion en
       // habitacion, a ponerla como aviable.
       // Get the booking
@@ -114,8 +122,4 @@ public class BookingService {
     return bookingRepository.findByUserId(userId);
   }
 
-  private LocalDate convertDate(String fechaString) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    return LocalDate.parse(fechaString, formatter);
-  }
 }
