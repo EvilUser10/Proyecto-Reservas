@@ -18,6 +18,8 @@ public class UserDto {
     Role role;
 	private String name;
 
+    private Long id;
+
 	private String username;
 
 	private String email;
@@ -27,6 +29,7 @@ public class UserDto {
     private List<Notification> notifications;
 
 	public UserDto(User user) {
+        this.setId(user.getId());
         this.setRole(user.getRole());
         this.setName(user.getName());
         this.setUsername(user.getUsername());

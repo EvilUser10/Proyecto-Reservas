@@ -41,6 +41,7 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
+
     @GetMapping("/hotel/{hotelId}")
     public ResponseEntity<List<Notification>> getNotificationsByHotelId(@PathVariable Long hotelId) {
         List<Notification> notifications = service.getAllByHotelId(hotelId);
