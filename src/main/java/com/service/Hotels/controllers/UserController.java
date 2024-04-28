@@ -15,6 +15,7 @@ import com.service.Hotels.services.UserService;
 import java.util.List;
 
 import com.service.Hotels.dto.UpdateUserDto;
+import com.service.Hotels.dto.UserDto;
 import com.service.Hotels.models.User;
 
 @RestController
@@ -38,8 +39,9 @@ public class UserController {
     }
 
     @GetMapping("{userName}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("userName") String userName) {
-        return ResponseEntity.ok(userService.getUserByUserName(userName));
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable("userName") String userName) {
+        User user = userService.getUserByUserName(userName);
+        return ResponseEntity.ok(new UserDto(user));
     }
 
     @PutMapping("{id}")

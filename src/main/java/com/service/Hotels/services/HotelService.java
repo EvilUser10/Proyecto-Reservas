@@ -47,10 +47,17 @@ public class HotelService {
 
     public CollectionModel<EntityModel<Hotel>> getAllHotels(Integer max, String orderby, String city) {
 
-        List<Hotel> hotels = hotelRepository.findAll().stream()
+        // List<Hotel> hotels = hotelRepository.findAll().stream()
+        //         .filter(hotel -> city == null || hotel.getCity().equalsIgnoreCase(city))
+        //         .limit(max)
+        //         .collect(Collectors.toList());
+
+                List<Hotel> hotels = hotelRepository.findAll().stream()
                 .filter(hotel -> city == null || hotel.getCity().equalsIgnoreCase(city))
-                .limit(max)
                 .collect(Collectors.toList());
+
+                Collections.shuffle(hotels);
+
 
         if (orderby.equalsIgnoreCase("rating")) {
             hotels.sort(Comparator.comparing(Hotel::getRating).reversed());
@@ -60,10 +67,11 @@ public class HotelService {
             // Ordenar aleatoriamente (manteniendo el orden actual)
             Collections.shuffle(hotels);
         }
-
+        
         if (hotels.isEmpty()) {
             throw new NotFoundException("No se encuentra ningún hotel con los criterios indicados");
         }
+        hotels = hotels.stream().limit(max).collect(Collectors.toList());
         Object userLoggedIn = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EntityModel<Hotel>> hotelModels = hotels.stream()
                 .map(hotel -> {
