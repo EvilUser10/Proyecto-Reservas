@@ -56,7 +56,7 @@ public class BookingService {
 
     Booking booking = new Booking();
     User user = userService.getUserById(userId);
-    Hotel hotel = hotelService.findHotelById(bookingRequest.getRoomId());
+    Hotel hotel = hotelService.findHotelById(hotelId);
     Room room = roomService.findById(bookingRequest.getRoomId());
 
     booking.setStartDate(startDate);
